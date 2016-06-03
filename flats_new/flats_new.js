@@ -736,9 +736,9 @@ var mainApp = angular.module('mainApp', [])
       id = 0;
     }
   }
-  }
+}
 
-  return id;
+return id;
 }
 function getContractNumber(manager, section, number) {
   var result = "";
@@ -908,8 +908,8 @@ flatObj.getContract = function(type) {
           if (type == "Внесен задаток") {
             // entranceSummGrn
             //debugger;
-            formData.append('data[entranceSummGrn]', flat.depositPerFlatSumm);
-            formData.append('data[clientOnePaymentSumm]', flat.depositPerFlatSumm);
+            formData.append('data[entranceSummGrn]', summRound(flat.depositPerFlatSumm).toFixed(2));
+            formData.append('data[clientOnePaymentSumm]', summRound(flat.depositPerFlatSumm).toFixed(2));
             var entranceSumm = getGrnAndCois(summRound(flat.depositPerFlatSumm));
             formData.append('data[entranceSummCursiveGrn]', entranceSumm.bills);
             formData.append('data[entranceSummCursiveKop]', getKopFromSumm(summRound(flat.depositPerFlatSumm)));
@@ -946,18 +946,18 @@ flatObj.getContract = function(type) {
             }
 
             var firstPaymentSummGrn = flat.firstMinPaymentSumm;
-            formData.append('data[clientFirstPaymentSummGrn]', summRound(firstPaymentSummGrn));
+            formData.append('data[clientFirstPaymentSummGrn]', summRound(firstPaymentSummGrn).toFixed(2));
             var firstPaymentSummGrnCursive = getGrnAndCois(summRound(firstPaymentSummGrn));
             formData.append('data[firstPaymentSummGrnCursiveGrn]', firstPaymentSummGrnCursive.bills);
             formData.append('data[firstPaymentSummGrnCursiveKop]', getKopFromSumm(summRound(firstPaymentSummGrn)));
 
-            formData.append('data[clientFirstPaymentSummGrnPdv]', summRound(firstPaymentSummGrn / 6));
+            formData.append('data[clientFirstPaymentSummGrnPdv]', summRound(firstPaymentSummGrn / 6).toFixed(2));
             var firstPaymentSummGrnCursivePdv = getGrnAndCois(summRound(firstPaymentSummGrn / 6));
             formData.append('data[firstPaymentSummGrnCursiveGrnPdv]', firstPaymentSummGrnCursivePdv.bills);
             formData.append('data[firstPaymentSummGrnCursiveKopPdv]', getKopFromSumm(summRound(firstPaymentSummGrn / 6)));
 
             var residueTotalSummGrn = summRound(flatTotalSummCreditGrn - flat.firstMinPaymentSumm);
-            formData.append('data[clientOneSummSecondPart]', residueTotalSummGrn);
+            formData.append('data[clientOneSummSecondPart]', residueTotalSummGrn.toFixed(2));
             var clientOneSummSecondPartCursive = getGrnAndCois(residueTotalSummGrn);
             formData.append('data[clientOneSummSecondPartCursiveGrn]', clientOneSummSecondPartCursive.bills);
             formData.append('data[clientOneSummSecondPartCursiveKop]', getKopFromSumm(residueTotalSummGrn));
@@ -1108,26 +1108,31 @@ flatObj.getContract = function(type) {
         formData.append('data[entranceSummGrn]', deposit.f21);
 
         // formData.append('data[entranceSummGrn]', deposit.f21);
-        $http.get('/api/data/tableRows?r=' + deposit.f9.replace(/[|,]/g, ""))
-        .success(function(data) {
+        $.ajax({
+          url:'/api/data/tableRows?r='+deposit.f9.replace(/[|,]/g, ""),
+          method:'GET',
+          async:false          
+        }).success(function(data) {
             // entranceSummGrn
             console.log(data,"data1");
+        
             ajaxPost('/api/other/pdf_from_snippet', formData, false, function(data) {
               res = data;
+
               console.log(data, "dataaaa");
             });
-          })
-        .error(function(){
-          console.log('we have error');
-        });
+          });
+
 
       } else {
         ajaxPost('/api/other/pdf_from_snippet', formData, false, function(data) {
           res = data;
+
           console.log(data, "dataaaa");
         });
       }
-
+      //debugger;
+      
       if (type == "Продано" || type == "Внесен задаток" || type == "Рассрочка") {
         console.log(flatObj.getSelectedFlat(),'type');
 
@@ -1137,6 +1142,7 @@ flatObj.getContract = function(type) {
       } else {
         return 'contract2';
       }
+    
     }
 
     //Work with operation table
@@ -1419,7 +1425,7 @@ flatObj.getContract = function(type) {
         //     //
         //     //   FlatsFactory.dataUpdate(item.field_value_id, data);
         //     // }
-        //   }
+        //   
         // })
       });
     $scope.openFlatModal = function(flat) {
