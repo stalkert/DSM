@@ -1,0 +1,467 @@
+<div class="parent-div" ng-controller="FlatsCtrl">
+  <div class="flax-flat-content" >
+    <div class="sidebar-menu-flats left-side" >
+      <div id="toggle-view-type">
+        <a href="#list" class="waves-effect waves-light btn tab-flats disabled" onclick="printFlatTable();"><i class="material-icons right ">reorder</i></a>
+        <a href="#chess" class="waves-effect waves-light btn tab-flats " onclick="printHouseList();"><i class="material-icons right">dashboard</i></a>
+      </div>
+      <!--<div id="toggle-view-type">-->
+      <!--</div>-->
+      <ul class="collapsible" data-collapsible="expandable" id="typeFilterMenu">
+        <div class="flat-filter active-filter">
+
+
+          <!--<li class="flat-filter active-filter">-->
+          <!--<div class="collapsible-header"><i class="material-icons">account_balance</i>Квартиры</div>-->
+          <!--<div class="collapsible-body">-->
+          <div class="input-field col m4 s12">
+            <select multiple id="rooms" onchange="setFilter('room', this.parentNode.querySelector('input').value)">
+              <option value="" disabled>Кол-во комнат</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div class="input-field col m4 s12">
+            <select multiple id="floors" onchange="setFilter('floor', this.parentNode.querySelector('input').value)">
+              <option value="" disabled selected>Этаж</option>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+            </select>
+          </div>
+          <div class="input-field col m4 s12">
+            <select multiple id="levels" onchange="setFilter('level', this.parentNode.querySelector('input').value)">
+              <option value="" disabled selected>Уровней</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+            </select>
+          </div>
+
+          <div class="input-field col m3 s6">
+            <input id="price_from" ng-model="priceFrom" type="text" class="validate">
+            <label for="price_from">Цена от</label>
+          </div>
+          <div class="input-field col m3 s6">
+            <input id="price_to" type="text" ng-model="priceTo" class="validate">
+            <label for="price_to">Цена до</label>
+          </div>
+          <div class="input-field col m3 s6">
+            <input id="square_from" type="text" ng-model="squareFrom" class="validate">
+            <label for="square_from">Площадь от</label>
+          </div>
+          <div class="input-field col m3 s6">
+            <input id="square_to" type="text" ng-model="squareTo" class="validate">
+            <label for="square_to">Площадь до</label>
+          </div>
+          <!--</div>-->
+          <!--</li>-->
+        </div>
+        <li class="house-filter">
+          <div class="collapsible-header"><i class="material-icons">location_city</i>Дом</div>
+          <div class="collapsible-body" id="housesList">
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="right-side">
+      <div id="list" class="tab-report-node">
+        <table class="bordered striped responsive-table">
+          <thead>
+            <tr>
+              <th data-field="address">Адрес</th>
+              <th data-field="section">Секция</th>
+              <th data-field="id">Номер</th>
+              <th data-field="name">Этаж</th>
+              <th data-field="room">Комнат</th>
+              <th data-field="square">Площадь</th>
+              <th data-field="price">Стоимость кв.м.</th>
+              <th data-field="cost">Общая стоимость</th>
+              <th data-field="finalDate">Конечная дата</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="flattable">
+            <tr ng-repeat="flat in flats | filter:byPriceFrom | filter:byPriceTo | filter:bySquareFrom | filter:bySquareTo"
+              ng-click="checkFlatEditable(flat)" ng-class="flat.NewClass">
+              <td ng-bind="flat.f6[0].f2 + ', ' + flat.f6[0].f1"></td>
+              <td ng-bind="flat.section"></td>
+              <td ng-bind="flat.number"></td>
+              <td ng-bind="flat.floor"></td>
+              <td ng-bind="flat.room"></td>
+              <td ng-bind="flat.square"></td>
+              <td ng-bind="flat.price"></td>
+              <td ng-bind="flat.totalSumm + 'грн.'"></td>
+              <td ng-bind="flat.finalDate"></td>
+              <td><i class="material-icons">zoom_out_map</i></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div id="flats-page-nav"></div>
+      </div>
+
+      <div id="chess" class="tab-flats-node">
+      </div>
+
+      <!-- Modal Structure -->
+      <div id="modal1" class="modal">
+        <div class="modal-content">
+          <h4>Modal Header</h4>
+          <p>A bunch of text</p>
+        </div>
+        <div class="modal-footer">
+          <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Busy Flat Modal Structure -->
+
+</div>
+
+<div id="warningModal" class="modal">
+    <div class="modal-content">
+      <i class="material-icons">sentiment_dissatisfied</i>
+      <h5>Эту квартиру уже редактирует другой менеджер</h5>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Закрыть</a>
+    </div>
+  </div>
+<div id="flatModal" class="modal bottom-sheet modal-fixed-footer" ng-controller="FlatCtrl">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col m6 s6">
+          <h4>Квартира №<span class="flat-number" ng-bind="selectedFlat.number"></span>
+            <small>
+              <span class="flat-house-address" ng-bind="selectedFlat.f6[0].f2"></span>,
+                <span class="flat-house-number" ng-bind="selectedFlat.f6[0].f1">10</span>
+            </small></h4>
+          <div class="card darken-1 z-depth-1">
+            <div class="card-content">
+              <p>Этаж: <span class="flat-floor" ng-bind="selectedFlat.floor"></span></p>
+              <p>Площадь: <span class="flat-square" ng-bind="selectedFlat.square"></span> м<sup>2</sup></p>
+              <p>Комнат: <span class="flat-room" ng-bind="selectedFlat.room"></span></p>
+              <p>Уровней: <span class="flat-level" ng-bind="selectedFlat.level"></span></p>
+              <p>Стоимость кв.м: <span class="flat-price" ng-bind="selectedFlat.price"></span> грн.</p>
+              <p style="font-weight:bold">Общая стоимость: <span class="flat-cost" ng-bind="selectedFlat.totalSumm"></span> грн.</p>
+              <img src="files/img/plan1.jpg" class="flat-photo" />
+            </div>
+          </div>
+        </div>
+        <div class="col m6 s6">
+          <div>
+            <div class="flat-client">
+              <h4>Клиент</h4>
+              <ul class="collection flat-client-list z-depth-1" >
+                <li ng-show="abilityToAddClient()" class="collection-item avatar">
+                  <i class="material-icons circle">person</i>
+                  <span class="title flat-client-name add-client" ng-click="openClientAddModal();">Добавить клиента</span>
+                </li>
+                <li ng-if="selectedFlat.clientsArray.length != 0" class="collection-item avatar" ng-repeat="client in selectedFlat.clientsArray">
+                  <img ng-src="{{client.photo}}" alt="" class="circle"/>
+                  <span class="title flat-client-name" ng-bind="client.name"></span>
+                  <a ng-show="showRemoveClientIcon()" href="#"><i class="remove-client-icon material-icons" ng-click="removeSelectedClient()">clear</i></a>
+                  <p>
+                    <span class="flat-client-phone" ng-bind="client.phone"></span>
+                    <br>
+                    <span class="flat-client-email" ng-bind="client.email"></span>
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="flat-history" ng-show="selectedFlat.historyList">
+            <h4>История</h4>
+            <ul class="collection flat-history-list z-depth-1">
+              <li class="collection-item" ng-repeat="history in selectedFlat.historyList track by $index">
+                <span class="title" ng-bind="history.f1"></span>
+                <span ng-show="history.f1 !== 'Забронировано'">
+                  <span ng-bind="history.f21 + 'грн.'"></span>
+                  <span class="flatPaymentStatus" ng-bind="history.f6"></span>
+                  <span ng-bind="toTrueFormat(history.date)"></span>
+                </span>
+                <span ng-if="history.f1 == 'Забронировано'" ng-bind="'менеджер:' + selectedFlat.manager.name"></span>
+                <span ng-hide="history.f1 === 'Забронировано' || history.f1 === 'Доплата по рассрочке'">
+                  <a ng-href="{{getValue(history.doc, history.f5)}}" class="secondary-content" target="_blank"><i class="material-icons">insert_drive_file</i></a>
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="flat-payment" ng-show="selectedFlat.paymentList">
+            <h4>Плановые платежи</h4>
+            <ul class="collection flat-payment-list z-depth-1">
+              <li ng-repeat="paymentOperation in selectedFlat.paymentList track by $index"
+                  ng-class="checkIfDateIsOverdue(paymentOperation.f1) ? 'collection-item overdue' : 'collection-item'">
+                <span class="title">
+                  <span ng-bind="'Сумма: ' + paymentOperation.f2 + 'грн.'"></span>
+                </span>
+                <span class="flat-payment-date" ng-bind="'До: ' + toTrueFormat(paymentOperation.f1)"></span>
+                <a href="#" ng-show="$index == 0"  class="secondary-content" style="display:none;">
+                  <i ng-click="openOperationModal(paymentOperation, selectedFlat.paymentList)" class="material-icons">add</i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+          <h4>Выберите действие</h4>
+          <ul class="tabs">
+            <li class="tab col s3" id="bookTabId">
+              <a class="active" href="#bookContentBlock">Бронь</a>
+            </li>
+            <li class="tab col s3" id="depositTabId">
+              <a href="#depositPerFlatBlock">Задаток</a>
+            </li>
+            <li class="tab col s3" id="sellTabId"><a href="#sellFlatBlock">Продажа</a></li>
+            <li class="tab col s3" id="installmentPlanTabId"><a ng-click="selectedFlat.creditMonth = 6" href="#creditFlatBlock">Рассрочка</a></li>
+          </ul>
+          <div id="bookContentBlock" class="action-block col s12" ng-controller="BookFlatCtrl">
+            <div ng-show="showBookFlat()">
+              <label for="birthdate" class="">Дата окончания брони</label>
+              <input input-date type="date" id="bookDate" class="a1date" datepicker="bookDate" min="0" ng-model="bookDate">
+              <input ng-if="showBookFlat()" type="button"
+                     ng-click="bookFlat()" class="waves-effect waves-light btn" value="Забронировать">
+            </div>
+            <div ng-show="hideCancelBookFlat()">
+              <label for="birthdate" ng-bind="'Забронировано до: ' + selectedFlat.lastOperation.f2"></label>
+              <button type="button" class="waves-effect waves-light btn" style="display: block;"
+                     ng-if="selectedFlat.lastOperation.f1 === 'Забронировано'"
+                     ng-click="cancelBookFlat()">Отменить бронирование</button>
+            </div>
+            <div ng-show="selectedFlat.clientsArray.length === 0">
+              <h4>Необходимо добавить клиента</h4>
+            </div>
+          </div>
+          <div id="depositPerFlatBlock" class="action-block col s12" ng-controller="DepositPerFlatCtrl">
+            <div ng-show="showDepositPerFlat()">
+              <label for="depositPerFlatSumm">Сумма задатка</label>
+              <input ng-model="selectedFlat.depositPerFlatSumm" type="number" class="validate">
+              <div ng-show="selectedFlat.depositPerFlatSumm >= 10000">
+                <label for="depositPerFlatDate" class="">Дата окончания задатка</label>
+                <input type="date" id="depositPerFlatDatepicker" class="depositPerFlatDatepicker" ng-model="xxxcred">
+                <button  ng-if="showDepositPerFlat() && isHaveDate()" class="waves-effect waves-light btn"
+                        ng-click="depositPerFlat()">Внести задаток</button>
+              </div>
+            </div>
+            <div ng-show="showCancelDepositPerFlat()">
+              <div>
+                <label class="">Дата окончания задатка: </label>
+                <span ng-bind="toTrueFormat(selectedFlat.paymentList[0].f1)"></span>
+              </div>
+              <div>
+                <label class="">Сумма задатка: </label>
+                <span ng-bind="selectedFlat.lastOperation.f21"></span>
+              </div>
+              <div>
+                <label for="a2cancelSumm">Сумма возвращаемого задатка:</label>
+                <input id="a2cancelSumm" type="number" class="validate"
+                       ng-model="selectedFlat.returnedSumm"></div>
+                <a class="waves-effect waves-light btn" ng-click="cancelDepositPerFlat()">Отменить задаток</a>
+            </div>
+            <div ng-show="selectedFlat.clientsArray.length > 1">
+              <h4>Оформить задаток можно только на одного человека!!!</h4>
+            </div>
+            <div ng-show="selectedFlat.clientsArray.length === 0">
+              <h4>Необходимо добавить клиента! Только одного!!!</h4>
+            </div>
+          </div>
+           <div id="sellFlatBlock" class="col s6" ng-controller="SellFlatCtrl">
+              <div ng-show="showSellFlat()" >
+                <div class="" ng-show="true">
+                  <label>Выберите акцию</label>
+                  <select class="dropdown-stock" ng-model="selectedFlat.selectedStock" ng-disabled="selectedFlat.selectedDiscount">
+                    <option value=""  selected>Выберите акцию</option>
+                    <option ng-repeat="stock in selectedFlat.stockForFlat track by $index"
+                    value="{{stock.f2}}" ng-bind="stock.f2"></option>
+                  </select>
+                  <label>Выберите скидку</label>
+                  <select ng-model="selectedFlat.selectedDiscount"
+                    ng-class="selectedFlat.selectedStock != 0 ? 'dropdown-discount disabled' : dropdown-discount"
+                    ng-disabled="selectedFlat.selectedStock" style="display:block;">
+                    <option value=""  selected>Выберите скидку</option>
+                    <option ng-repeat="discount in selectedFlat.discountForFlat track by $index"
+                    value="{{discount.f2}}" ng-bind="discount.f2"></option>
+                  </select>
+                </div>
+                <a ng-if="showSellFlat()" style="margin-top: 20px;" class="waves-effect waves-light btn" ng-click="sellFlat()">Оформить покупку</a>
+              </div>
+              <div ng-show="showCancelSellFlat()" style="padding-top: 10px;">
+                <label for="depositPerFlatSumm">Возвращаемая сумма:</label>
+                <input ng-model="selectedFlat.returnedSellSumm" type="number" class="validate">
+                <a ng-if="showCancelSellFlat()" class="waves-effect waves-light btn" ng-click="cancelSellFlat()">Отмена продажи</a>
+              </div>
+              <div ng-show="selectedFlat.clientsArray.length === 0">
+                <h4>Необходимо добавить клиента!</h4>
+              </div>
+          </div>
+          <div id="creditFlatBlock" class="action-block col s12" ng-controller="CreditPerFlatCtrl">
+            <div ng-show="showCreditFlat()">
+              <div>
+                 <span>Минимальный взнос: <span ng-bind="selectedFlat.minPaymentSummOutput"></span></span>
+              </div>
+              <div>
+                 <div style="padding-left:0">
+                 <label for="creditSummInput">Сумма начального взноса:</label>
+                 <input id="creditSummInput" type="number" class="validate" ng-model="selectedFlat.firstMinPaymentSumm">
+                 </div>
+                 <label>Выберите длительность</label>
+                 <input class="with-gap" name="group1"  ng-model="selectedFlat.creditMonth" value="6" type="radio" id="6month"/>
+                 <label for="6month">6 месяцев</label>
+                 <input class="with-gap" name="group1" type="radio" ng-model="selectedFlat.creditMonth" value="12" id="12month" />
+                 <label for="12month">12 месяцев</label>
+              </div>
+              <div ng-show="selectedFlat.firstMinPaymentSumm >= selectedFlat.minPaymentSumm">
+                <ul id="installmentPlanList" class="row collection">
+                  <span>Для одного клиента.</span>
+                   <li>
+                     <span>Сумма начального взноса: <spanng ng-bind="selectedFlat.firstMinPaymentSumm"></span></span>
+                   </li>
+                   <li ng-show="selectedFlat.clientsArray.length == 1" ng-repeat="item in selectedFlat.creditPlanArray">
+                     <span>Оплатить до: <span ng-bind="item.date">,</span></span>
+                     <span>сумма: <span ng-bind="item.summ"></span></span>
+                   </li>
+                </ul>
+                 <a class="waves-effect waves-light btn" ng-click="creditFlat()">Оформить рассрочку</a>
+              </div>
+            </div>
+            <div ng-show="showCancelCreditFlat()">
+              <label for="creditPerFlatSumm">Возвращаемая сумма:</label>
+              <input ng-model="selectedFlat.returnedCreditSumm" type="number" class="validate">
+              <a ng-if="showCancelCreditFlat()" class="waves-effect waves-light btn" ng-click="cancelCreditFlat()">Отмена рассрочки</a>
+            </div>
+          </div>
+
+
+          <!--
+          <a class='dropdown-button btn action-btn' href='#' data-activates='dropdown1'>Действие</a>
+          <ul id='dropdown1' class='dropdown-content'>
+          <li><a href="#!">Забронировать</a></li>
+          <li><a href="#!">Задаток</a></li>
+          <li><a href="#!">Продажа</a></li>
+          <li><a href="#!">Рассрочка</a></li>
+          <li><a href="#!">Внести платеж</a></li>
+          <li class="divider"></li>
+          <li><a href="#!">Отмена брони</a></li>
+          <li><a href="#!">Отмена задатка</a></li>
+          <li><a href="#!">Смена объекта</a></li>
+        </ul>
+      -->
+
+      </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" id="saveFlatModal"
+            ng-click="setEditableTrue()" data-flat-id="">Закрыть</a>
+    </div>
+  </div>
+</div>
+<div id="plannedOperationModal" class="modal bottom-sheet" ng-controller="PlannedOperationCtrl">
+  <div class="modal-content">
+      <div class="input-field col s12">
+          <label style="position: initial">Сумма к оплате: </label><span ng-bind="selectedFlat.paymentOperation.f2"></span>
+      </div>
+      <div class="input-field col s12">
+          <label for="plennedOperationSummInput" style="left:0">Введите сумму:</label>
+          <input placeholder="Сумма" ng-model="paymentOperationEnteredSumm" value=0 type="text" class="validate">
+      </div>
+      <div>
+          <a ng-click="setPaymentOperation()" class="waves-effect blue darken-2 btn">Оплатить</a>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Закрыть</a>
+  </div>
+</div>
+<div id="clientAddModal" class="modal bottom-sheet" ng-controller="ClientCtrl">
+  <ul class="tabs">
+      <li class="tab col s6" id="addUserTab"><a class="active" href="#addClientModalPart">Добавить</a></li>
+      <li class="tab col s6" id="selectUserTab"><a href="#selectClientModalPart">Выбрать существующего</a></li>
+  </ul>
+    <div id="addClientModalPart" class="modal-content">
+        <div class="row">
+            <div class="input-field col s6">
+                <input placeholder="ФИО клиента" id="userValname" type="text" class="validate">
+                <label for="userValname">ФИО</label>
+            </div>
+            <div class="input-field col s6">
+                <input placeholder="Номер телефона клиента" id="userValphone" type="text" class="validate">
+                <label for="userValphone">Телефон</label>
+            </div>
+            <div class="input-field col s6">
+                <input placeholder="E-mail клиента" id="userValemail" type="text" class="validate">
+                <label for="userValemail">E-mail</label>
+            </div>
+            <div class="file-field input-field col s6">
+                <div class="btn">
+                    <span>Фото</span>
+                    <input type="file" id="userValFilephoto">
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text" placeholder="Фотография клиента" id="userValphoto">
+                </div>
+            </div>
+            <div class="input-field col s6">
+                <input placeholder="Серия паспорта клиента" id="userValpassportSerialKey" type="text" class="validate">
+                <label for="userValpassportSerialKey">Серия паспорта</label>
+            </div>
+            <div class="input-field col s6">
+                <input placeholder="Номер паспорта клиента" id="userValpassportSerialNum" type="text" class="validate">
+                <label for="userValpassportSerialNum">Номер паспорта</label>
+            </div>
+            <div class="input-field col s6">
+                <input placeholder="Кем выдан паспорт клиента" id="userValwhoGavePassport" type="text" class="validate">
+                <label for="userValwhoGavePassport">Кем выдан паспорт</label>
+            </div>
+            <div class="input-field col s6">
+                <input placeholder="Адрес прописки клиента" id="userValregistrationAddress" type="text" class="validate">
+                <label for="userValregistrationAddress">Адрес прописки</label>
+            </div>
+            <div class="input-field col s6">
+                <input placeholder="Адрес проживания клиента" id="userValhomeAddress" type="text" class="validate">
+                <label for="userValhomeAddress">Адрес проживания</label>
+            </div>
+            <div class="input-field col s6">
+                <input placeholder="ИНН клиента" id="userValINN" type="text" class="validate">
+                <label for="userValINN">ИНН</label>
+            </div>
+            <div>
+                <a ng-click="addNewClientAndSave()" id="addBtn" class="waves-effect blue darken-2 btn">Добавить</a>
+            </div>
+        </div>
+    </div>
+    <div id="selectClientModalPart" class="modal-content">
+        <form>
+            <div class="input-field">
+              <input id="search" ng-init="searchClientValue = ''" ng-model="searchClientValue" type="search" required>
+              <label for="search"><i class="material-icons">search</i></label>
+              <i class="material-icons">close</i>
+            </div>
+        </form>
+        <ul class='collection clients-list'>
+          <li class="collection-item avatar" ng-repeat="client in clients | filter:byName">
+            <img ng-src="{{client.photo}}" alt="photo" class="circle" />
+            <span class="title" ng-bind="client.name"></span>
+            <p>
+              <span ng-bind="client.phone"></span><br>
+              <span ng-bind="client.email"></span>
+            </p>
+            <a href="#" ng-click="pickClientFromExistsAndAddToSelectedFlatScope(client)" class="secondary-content">
+              <i class="material-icons">add</i>
+            </a>
+          </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Закрыть</a>
+    </div>
+</div>

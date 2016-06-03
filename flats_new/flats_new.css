@@ -1,0 +1,349 @@
+#content {
+  height: auto !important;
+}
+
+.right-side {
+  margin: 0 auto;
+}
+.active-tab {
+  border-bottom: 2px solid;
+}
+
+#warningModal h5 {
+    text-align: center;
+}
+
+#warningModal {
+    text-align: center;
+}
+
+#warningModal .material-icons  {
+    font-size: 50px;
+}
+
+.flat-filter {
+    padding: 0 20px;
+}
+
+.flat-filter .input-field  {
+    margin-top: 0;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+.flat-filter, .house-filter {
+    display: none;
+}
+
+.flat-filter.active-filter, .house-filter.active-filter {
+    display: block;
+}
+
+.tab-report-node {
+    overflow-y: auto;
+}
+
+#content {
+    padding: 0 !important;
+    /*height: calc(100vh - 159px);*/
+    height: calc(100vh - 114px);
+}
+
+.collapsible-body div {
+    padding: 0 10px;
+}
+.collapsible-body div:nth-child(1) {
+    padding: 0 5px;
+}
+.collapsible-body div:nth-child(2) {
+    padding: 0 5px;
+}
+.collapsible-body div:nth-child(3) {
+    padding: 0 5px;
+}
+
+.collapsible-body input[type=text] {
+    margin: 0;
+}
+
+/*.collapsible div.input-field {*/
+/*    padding: 0 15px;*/
+/*}*/
+
+.collapsible .material-icons {
+    color: #555555;
+}
+
+#toggle-view-type .btn {
+    width: 50px;
+    text-align: center;
+    padding: 0;
+    padding-right: 1em;
+    display: inline-block;
+    margin: 0;
+}
+
+#toggle-view-type {
+    margin: 20px;
+}
+
+#flatModal {
+    max-height: 100%;
+    height: 100%;
+}
+#flatModal img {
+    max-width: 50%;
+}
+#flatModal .action-btn {
+    padding: 0 3rem;
+}
+#flatModal h4 small {
+    font-size: 70%;
+    line-height: 100%;
+}
+#flattable tr {
+    cursor: pointer;
+}
+#flatModal .collection {
+    border: 0;
+}
+#flatModal h4 {
+    font-size: 150%;
+    font-weight: 300;
+}
+.overdue {
+    background: #FFDFDC;
+}
+#list .material-icons {
+    vertical-align: bottom;
+}
+.add-client {
+    margin: 10px 0;
+    display: block;
+}
+
+#clientModal.modal.bottom-sheet {
+  max-height: 65%;
+}
+
+.add-client:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.action-block {
+    padding: 20px 0 !important;
+    /*display: inline-block !important;*/
+    width: auto !important;
+}
+#list .flat-is-booked, .flat-is-booked {
+    background: #008B00;
+}
+#list .flat-is-surcharge-for-installment, .flat-is-surcharge-for-installment {
+    background: #B2FFBB;
+}
+
+#list .flat-in-installments, .flat-in-installments {
+    background: #917AA2;
+}
+
+#list .flat-is-introduced-a-deposit, .flat-is-introduced-a-deposit {
+    background: #EEAD0E;
+}
+
+#list .flat-is-introduced-a-deposit-lated, .flat-is-introduced-a-deposit-lated {
+    background: #ffcdd2;
+}
+#list .flat-is-sold, .flat-is-sold {
+    background: #D22222;
+}
+
+#list {
+    padding: 20px;
+}
+
+#userModal {
+    height: 75%;
+    max-height: 75%;
+}
+
+.flat-history-list {
+    display: block;
+    overflow-y: auto !important;
+    max-height: 170px;
+}
+
+#installmentPlanListUser1 .installmentPlanListUser1-item,
+#installmentPlanListUser2 .installmentPlanListUser2-item,
+#installmentPlanList .installmentPlanList-item {
+    line-height: 0.5rem;
+    padding: 17px 20px;
+}
+
+#setCreditBtn {
+    display: none;
+}
+
+
+/*flex-box-style*/
+
+.flax-flat-content {
+    display: flex;
+    height: 100%;
+}
+
+/*.flax-flat-content .right-side {*/
+/*    flex-basis: 80%*/
+/*}*/
+
+
+.left-side {
+    background-color: #EEE;
+    overflow-y: auto;
+}
+/*!flex-box-style*/
+
+.tab-flats.btn {
+    width: 162px;
+    text-align: center;
+    display: block;
+    /*margin: 0 auto;*/
+    margin-bottom: 10px;
+    margin-left: 20px;
+}
+.tab-flats.btn:nth-child(2) {
+    margin-bottom: 30px;
+}
+
+.chess-section__header {
+    text-align: center;
+    padding-bottom: 6px;
+    font-weight: bold;
+}
+
+.tab-flats-node {
+    display: none;
+}
+
+.tab-flats-node.active {
+    display: block;
+}
+
+.sidebar-menu-flats {
+    display: inline-block;
+    vertical-align: top;
+    /*padding-right: 20px;*/
+}
+
+footer.page-footer.blue.darken-2{
+    margin-top: 0;
+}
+
+/*chess table*/
+
+#chess {
+    padding: 20px;
+    overflow: auto;
+}
+
+#Петровская1 {
+    margin-bottom: 40px;
+}
+
+.chess-section,
+.chess-flat {
+    display:inline-block;
+}
+
+/*.chess-section:nth-child(1) {*/
+/*    border-left: 1px solid #ADABAB;*/
+
+/*}*/
+
+.chess-section {
+    /*border-bottom: 1px solid #ADABAB;*/
+    /*border-left: 1px solid #ADABAB;*/
+    padding-left: 10px;
+}
+
+.chess-section .chess-floor {
+    border-left: 1px solid #ADABAB;
+}
+ .chess-floor.Floorundefined {
+    border-bottom: 1px solid #ADABAB;
+}
+
+.Floor1 {
+    border-bottom: 1px solid #ADABAB;
+}
+
+/*.flat-data {*/
+/*    padding-top: 5px;*/
+/*}*/
+
+.chess-flat {
+    cursor: pointer;
+    height: 70px;
+    border-top: 1px solid #ADABAB;
+    border-right: 1px solid #ADABAB;
+    text-align: center;
+    padding: 10px;
+}
+
+.chess-floor-number:nth-child(1) {
+    /*border-top:1px solid black;*/
+}
+
+.chess-floor-number {
+    height: 70px;
+    text-align: center;
+    /*border-bottom: 1px solid black;*/
+    /*border-left: 1px solid black;*/
+    /*border-right: 1px solid black;*/
+}
+
+.chess-floor-label-div {
+    /*border: 1px solid black;*/
+    text-align: center;
+    padding-bottom: 7px;
+    font-weight: bold;
+    /*padding-right: 5px;*/
+}
+
+.chess-floor-number-span {
+    display: inline-block;
+    position: relative;
+    top: 20px;
+    text-align: center;
+    padding-right: 5px;
+}
+
+
+#flatModal.modal.modal-fixed-footer .modal-content {
+  position: initial;
+}
+
+#flatModal.modal.modal-fixed-footer .modal-footer {
+  left: 0;
+}
+
+.dropdown-stock,
+.dropdown-discount {
+  display: inline-block;
+}
+
+#sellFlatBlock {
+  float: right;
+}
+
+
+#flatModal .collection.flat-payment-list {
+  max-height: 170px;
+  overflow-y: scroll;
+}
+
+.remove-client-icon {
+  display: inline-block;
+  float: right;
+}

@@ -1,0 +1,90 @@
+﻿<!--Договір 2_покупці_розстрочка-->
+contractNumber - номер договора
+currentDate - текущая дата
+currentMonth - текущий месяц(прописью)
+currentYear - текущий год
+clientOne - ФИО клиент 1
+clientOnePassportSer - серия паспорта клиент 1
+clientOnePassportNum - номер паспорта клиент 1
+clientOnePassportIssued - кем паспорт выдан и когда клиент 1
+clientOneAddressReg - адресс регистрации клиент 1
+clientOneAddressRes - фактическое место проживания клиент 1
+clientOneINN - инн клиент 1
+clientTwo - фио клиент 2
+clientTwoPassportSer - серия паспорта клиент 2
+clientTwoPassportNum - номер паспорта клиент 2
+clientTwoPassportIssued - кем паспорт выдан и когда клиент 2
+clientTwoAddressReg - адресс регистрации клиент 2
+clientTwoAddressRes - фактическое место проживания клиент 2
+clientTwoINN - инн клиент 2
+flatNum - номер квартиры
+flatRooms - количество комнат
+flatAllSquare - общая площадь квартиры
+flatLivingSquare - жилая площадь квартиры
+flatFloor - этаж на котором находится квартира
+section - название секции в которой находится квартира
+flatSummGrnForMeterCredit - стоимость квадратного метра с удорожанием, принцип подсчета стоимости был обговорен с заказчиком
+flatSummGrnForMeterCreditCursiveGrn - стоимость квадратного метра с удорожанием - гривны, курсивом(словами)
+flatSummGrnForMeterCreditCursiveKop - стоимость квадратного метра с удороданием, остаток копейки курсивом
+flatSummGrnForMeterCreditPdv - пдв 20%  береться от стоимости квадратного метра с удорожанием
+flatSummGrnForMeterCreditCursiveGrnPdv - пдв 20% береться от стоимости квадратного метра с удорожанием - гривны курсивом
+flatSummGrnForMeterCreditCursiveKopPdv - пдв 20% береться от стоимости квадратного метра с удорожанием - копейки курсивом
+flatSummUsdForMeterCredit - стоимость квадратного метра с удорожанием в долларах
+flatSummUsdForMeterCursiveCreditUsd - стоимость кавдратного метра с удорожанием - доллар курсивом
+flatSummUsdForMeterCursiveCreditСent - стоимость кавдратного метра с удорожанием - цент курсивом
+dollar - стоимость одного доллара в гривнах
+dollarCursiveCursiveUsd - стоимость одного доллара в гривнах - курсивом гривны
+dollarCursiveCursiveСent - стоимость одного доллара в гривнах - курсивом копейки
+flatTotalSummCreditGrn - общая стоимость квартиры на момент подписания договора в гривне с удорожанием (удорожание работает только на рассрочку)
+flatTotalSummCreditGrnCursiveGrn - общая стоимость квартиры на момент подписания договора в гривне с удорожанием, гривны курсивом
+flatTotalSummCreditGrnCursiveKop - общая стоимость квартиры на момент подписания договора в гривне с удорожанием, копейки курсивом
+flatTotalSummCreditGrnPdv - пдв 20% со стоимости квартиры с удорожанием в гривне
+flatTotalSummCreditGrnCursiveGrnPdv - пдв 20% со стоимости квартиры с удорожанием в гривне, курсивом гривны
+flatTotalSummCreditGrnCursiveKopPdv - пдв 20% со стоимости квартиры с удорожанием в гривне, курсивом копейки
+flatTotalSummCreditUsd - общая стоимость квартиры на момент подписания договора в долларах с удорожанием (удорожание работает только на рассрочку)
+flatTotalSummCreditUsdCursiveUsd - общая стоимость квартиры на момент подписания договора в долларах с удорожанием, доллары курсивом
+flatTotalSummCreditUsdCursiveCent - общая стоимость квартиры на момент подписания договора в долларах с удорожанием, сенты курсивом
+clientOneFirstPaymentSummGrn - первый платеж, сумма которую вносит клиент 1 - она вычисляеться как половина от той суммы, что ввел менеджер
+clientOneFirstPaymentSummGrnCursiveGrn - первый платеж клиент 1 курсивом гривны
+clientOneFirstPaymentSummGrnCursiveKop - первый платеж клиент 1 курсивом копейки
+clientOneFirstPaymentSummGrnPdv - пдв 20% от той суммы, что внес клиент 1
+clientOneFirstPaymentSummGrnCursiveGrnPdv - пдв 20% от той суммы, что внес клиент 1 - курсивом гривны
+clientOneFirstPaymentSummGrnCursiveKopPdv - пдв 20% от той суммы, что внес клиент 1 - курсивом копейки
+clientOneSummSecondPartCredit - вторая часть, что осталось заплатить за квартиру клиент 1
+clientOneSummSecondPartCursiveGrn - вторая часть, что осталось заплатить за квартиру клиент 1, курсивом гривны
+clientOneSummSecondPartCursiveKop - вторая часть, что осталось заплатить за квартиру клиент 1, курсивом копейки
+clientOneSummSecondPartPdv - пдв 20% от второй суммы клиент 1
+clientOneSummSecondPartPdvCursiveGrn - пдв 20% от второй суммы клиент 1 курсив гривны
+clientOneSummSecondPartPdvCursiveKop - пдв 20% от второй суммы клиент 1 курсив копейки
+clientOneLastFeeSummDate - число до которого нужно завплатить последний взнос по рассрочке клиент 1
+clientOneLastFeeSummMonth - месяц до которого нужно завплатить последний взнос по рассрочке клиент 1 курсивом
+clientOneLastFeeSummYear - год до которого нужно завплатить последний взнос по рассрочке клиент 1
+clientTwoFirstPaymentSummGrn - первый платеж, сумма которую вносит клиент 2 - она вычисляеться как половина от той суммы, что ввел менеджер
+clientTwoFirstPaymentSummGrnCursiveGrn - первый платеж клиент 2 курсивом гривны
+clientTwoFirstPaymentSummGrnCursiveKop - первый платеж клиент 2 курсивом копейки
+clientTwoFirstPaymentSummGrnPdv - пдв 20% от той суммы, что внес клиент 2
+clientTwoFirstPaymentSummGrnCursiveGrnPdv - пдв 20% от той суммы, что внес клиент 2 - курсивом гривны
+clientTwoFirstPaymentSummGrnCursiveKopPdv - пдв 20% от той суммы, что внес клиент 2 - курсивом копейки
+clientTwoSummSecondPartCredit - вторая часть, что осталось заплатить за квартиру клиент 2
+clientTwoSummSecondPartCursiveGrn - вторая часть, что осталось заплатить за квартиру клиент 2, курсивом гривны
+clientTwoSummSecondPartCursiveKop - вторая часть, что осталось заплатить за квартиру клиент 2, курсивом копейки
+clientTwoSummSecondPartPdv - пдв 20% от второй суммы клиент 2
+clientTwoSummSecondPartPdvCursiveGrn - пдв 20% от второй суммы клиент 2 курсив гривны
+clientTwoSummSecondPartPdvCursiveKop - пдв 20% от второй суммы клиент 2 курсив копейки
+clientOnePhone - номер телефона клиент 1
+clientOneMail - email клиент 1
+clientTwoPhone - номер телефона клиент 2
+clientTwoMail - email клиент 2
+currentDMY - текущая дата
+flatNumCursive - номер квартиры курсивом
+flatRoomsCursive - кол-во комнат курсивом
+flatAllSquareCursive - площадь курсивом
+flatLivingSquareCursive - жилая площадь курсивом
+brickType - материал внутренних и внешних стен(газоблок стіновий/цегла керамічна М100),  в спецификации
+testImg - выкопировка плана этажа(картинка)
+creditOperationList - тринг, в котором уже сформирован html, по плановым платежам клиента
+нужно будет добавить переменные в шаблон, для того чтобы работали договора для всех адресов, предлагаю -
+streetName - название улицы (Петровская, Белогородская)
+houseNumber - номер дома
+cadastralNumber - кадастровый номер, может менятся, в зависимости от адреса
+apartmentType - тип апартаментов - "квартира, офис, кладовая"
