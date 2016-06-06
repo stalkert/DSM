@@ -1104,18 +1104,58 @@ flatObj.getContract = function(type) {
       var deposit = flatObj.checkIfFlatHasDeposit(flat);
       formData.append('options','{"border":{"top":"10mm"}}');
 
-      if (deposit && deposit.f1 == "Внесен задаток" && deposit.f9) {
-        formData.append('data[entranceSummGrn]', deposit.f21);
+      if (deposit && deposit.f1 == "Внесен задаток" && deposit.f9 && deposit.f6 == "Оплачено") {
+        var depositSummGrn = summRound(deposit.f21);
+        formData.append('data[depositSummGrn]', depositSummGrn.toFixed(2));
+        formData.append('data[depositSummCursiveGrn]', getGrnAndCois(depositSummGrn).bills);
+        formData.append('data[depositSummCursiveKop]', getKopFromSumm(depositSummGrn));
+        if (flat.clientsArray.length == 1) {
+          var clientOneSummMinusDeposit = getGrnAndCois(summRound(flat.totalSumm - depositSummGrn));
+          formData.append('data[clientOneSummMinusDeposit]', summRound(flat.totalSumm-depositSummGrn).toFixed(2));
+          formData.append('data[clientOneSummMinusDepositCursiveGrn]', clientOneSummMinusDeposit.bills);
+          formData.append('data[clientOneSummMinusDepositCursiveKop]', getKopFromSumm(summRound(flat.totalSumm-depositSummGrn)));
+          var clientOneSummMinusDepositPdv = getGrnAndCois(summRound((flat.totalSumm-depositSummGrn) / 6));
+          formData.append('data[clientOneSummMinusDepositPdv]', summRound((flat.totalSumm-depositSummGrn) / 6).toFixed(2));
+          formData.append('data[clientOneSummMinusDepositPdvCursiveGrn]', clientOneSummMinusDepositPdv.bills);
+          formData.append('data[clientOneSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm-depositSummGrn) / 6))); 
+        }
+        if (flat.clientsArray.length == 2) {
+          var clientOneSummMinusDeposit = getGrnAndCois(summRound((flat.totalSumm/2) - depositSummGrn));
+          formData.append('data[clientOneSummMinusDeposit]', summRound((flat.totalSumm/2)-depositSummGrn).toFixed(2));
+          formData.append('data[clientOneSummMinusDepositCursiveGrn]', clientOneSummMinusDeposit.bills);
+          formData.append('data[clientOneSummMinusDepositCursiveKop]', getKopFromSumm(summRound((flat.totalSumm/2)-depositSummGrn)));
+          var clientOneSummMinusDepositPdv = getGrnAndCois(summRound(((flat.totalSumm/2)-depositSummGrn) / 6));
+          formData.append('data[clientOneSummMinusDepositPdv]', summRound(((flat.totalSumm/2)-depositSummGrn) / 6).toFixed(2));
+          formData.append('data[clientOneSummMinusDepositPdvCursiveGrn]', clientOneSummMinusDepositPdv.bills);
+          formData.append('data[clientOneSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound(((flat.totalSumm/2)-depositSummGrn) / 6)));
 
+          var clientTwoSummMinusDeposit = getGrnAndCois(summRound(flat.totalSumm - depositSummGrn));
+          formData.append('data[clientTwoSummMinusDeposit]', summRound(flat.totalSumm-depositSummGrn).toFixed(2));
+          formData.append('data[clientTwoSummMinusDepositCursiveGrn]', clientOneSummMinusDeposit.bills);
+          formData.append('data[clientTwoSummMinusDepositCursiveKop]', getKopFromSumm(summRound(flat.totalSumm-depositSummGrn)));
+          var clientOneSummMinusDepositPdv = getGrnAndCois(summRound((flat.totalSumm-depositSummGrn) / 6));
+          formData.append('data[clientTwoSummMinusDepositPdv]', summRound((flat.totalSumm-depositSummGrn) / 6).toFixed(2));
+          formData.append('data[clientTwoSummMinusDepositPdvCursiveGrn]', clientOneSummMinusDepositPdv.bills);
+          formData.append('data[clientTwoSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm-depositSummGrn) / 6))); 
+
+        }
         // formData.append('data[entranceSummGrn]', deposit.f21);
         $.ajax({
           url:'/api/data/tableRows?r='+deposit.f9.replace(/[|,]/g, ""),
           method:'GET',
           async:false          
         }).success(function(data) {
-            // entranceSummGrn
+          //debugger;
+          var depositDataFromBank = JSON.parse(data);
+          var depositDataFromBankNumber = depositDataFromBank[0].f1;
+          var depositDataFromBankDate = depositDataFromBank[0].f2.split('-');
+            // numOrdering
+            formData.append('data[numOrdering]', depositDataFromBankNumber);
+            formData.append('data[numOrderingDate]', depositDataFromBankDate[2]);  
+            formData.append('data[numOrderingMonth]', depositDataFromBankDate[1]);  
+            formData.append('data[numOrderingYear]', depositDataFromBankDate[0]);    
             console.log(data,"data1");
-        
+
             ajaxPost('/api/other/pdf_from_snippet', formData, false, function(data) {
               res = data;
 
@@ -1142,7 +1182,7 @@ flatObj.getContract = function(type) {
       } else {
         return 'contract2';
       }
-    
+
     }
 
     //Work with operation table
@@ -1425,7 +1465,7 @@ flatObj.getContract = function(type) {
         //     //
         //     //   FlatsFactory.dataUpdate(item.field_value_id, data);
         //     // }
-        //   
+        //   }
         // })
       });
     $scope.openFlatModal = function(flat) {
