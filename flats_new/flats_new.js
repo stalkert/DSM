@@ -1174,7 +1174,58 @@ flatObj.getContract = function(type) {
           formData.append('data[clientTwoSummMinusDepositPdv]', summRound((flat.totalSumm/2) / 6).toFixed(2));
           formData.append('data[clientTwoSummMinusDepositPdvCursiveGrn]', clientTwoSummMinusDepositPdv.bills);
           formData.append('data[clientTwoSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm/2) / 6))); 
+          //рассрочка на 2 клиента + задаток
+          if (flat.firstMinPaymentSumm > 1) {
+            // set length for planning operation list its depends for clients array
+            if (flat.creditPlanArray && flat.creditPlanArray.length > 0) {
+              creditPlanArrayLength = flat.creditPlanArray.length;
+            }
 
+            var firstPaymentSummGrn = summRound(flat.firstMinPaymentSumm / 2);
+            formData.append('data[clientOneFirstPaymentSummMinusDepositGrn]', summRound(firstPaymentSummGrn-depositSummGrn).toFixed(2));
+            //first client
+            var clientOneFirstPaymentSummMinusDepositCursiveGrn = getGrnAndCois(summRound(firstPaymentSummGrn-depositSummGrn));
+            formData.append('data[clientOneFirstPaymentSummMinusDepositCursiveGrn]', clientOneFirstPaymentSummMinusDepositCursiveGrn.bills);
+            formData.append('data[clientOneFirstPaymentSummMinusDepositCursiveKop]', getKopFromSumm(summRound(firstPaymentSummGrn-depositSummGrn)));
+
+            formData.append('data[clientOneFirstPaymentSummMinusDepositGrnPdv]', summRound(summRound(firstPaymentSummGrn-depositSummGrn) / 6).toFixed(2));
+            var clientOneFirstPaymentSummGrnCursivePdv = getGrnAndCois(summRound(summRound(firstPaymentSummGrn-depositSummGrn) / 6));
+            formData.append('data[clientOneFirstPaymentSummMinusDepositCursiveGrnPdv]', clientOneFirstPaymentSummGrnCursivePdv.bills);
+            formData.append('data[clientOneFirstPaymentSummMinusDepositCursiveKopPdv]', getKopFromSumm(summRound(summRound(firstPaymentSummGrn-depositSummGrn) / 6)));
+
+            var clientOneResidueTotalSummGrn = summRound(summRound(flatTotalSummCreditGrn / 2) - firstPaymentSummGrn);
+            formData.append('data[clientOneSummSecondPartCredit]', clientOneResidueTotalSummGrn.toFixed(2));
+            var clientOneSummSecondPartCursive = getGrnAndCois(clientOneResidueTotalSummGrn);
+            formData.append('data[clientOneSummSecondPartCursiveGrn]', clientOneSummSecondPartCursive.bills);
+            formData.append('data[clientOneSummSecondPartCursiveKop]', getKopFromSumm(clientOneResidueTotalSummGrn));
+
+            formData.append('data[clientOneSummSecondPartPdv]', summRound(clientOneResidueTotalSummGrn / 6));
+            var clientOneSummSecondPartCursivePdv = getGrnAndCois(summRound(clientOneResidueTotalSummGrn / 6));
+            formData.append('data[clientOneSummSecondPartPdvCursiveGrn]', clientOneSummSecondPartCursivePdv.bills);
+            formData.append('data[clientOneSummSecondPartPdvCursiveKop]', getKopFromSumm(summRound(clientOneResidueTotalSummGrn / 6)));
+
+            //second client
+            formData.append('data[clientTwoFirstPaymentSummGrn]', firstPaymentSummGrn.toFixed(2));
+            var clientTwoFirstPaymentSummGrnCursive = getGrnAndCois(firstPaymentSummGrn);
+            formData.append('data[clientTwoFirstPaymentSummGrnCursiveGrn]', clientTwoFirstPaymentSummGrnCursive.bills);
+            formData.append('data[clientTwoFirstPaymentSummGrnCursiveKop]', clientTwoFirstPaymentSummGrnCursive.coins);
+
+            formData.append('data[clientTwoFirstPaymentSummGrnPdv]', summRound(firstPaymentSummGrn / 6).toFixed(2));
+            var clientTwoFirstPaymentSummGrnCursivePdv = getGrnAndCois(summRound(firstPaymentSummGrn / 6));
+            formData.append('data[clientTwoFirstPaymentSummGrnCursiveGrnPdv]', clientTwoFirstPaymentSummGrnCursivePdv.bills);
+            formData.append('data[clientTwoFirstPaymentSummGrnCursiveKopPdv]', getKopFromSumm( summRound(firstPaymentSummGrn / 6)));
+
+            var clientTwoResidueTotalSummGrn = summRound(summRound(flatTotalSummCreditGrn / 2) - firstPaymentSummGrn);
+            formData.append('data[clientTwoSummSecondPartCredit]', clientTwoResidueTotalSummGrn.toFixed(2));
+            var clientTwoSummSecondPartCursive = getGrnAndCois(clientTwoResidueTotalSummGrn);
+            formData.append('data[clientTwoSummSecondPartCursiveGrn]', clientTwoSummSecondPartCursive.bills);
+            formData.append('data[clientTwoSummSecondPartCursiveKop]', getKopFromSumm(clientTwoResidueTotalSummGrn));
+
+            formData.append('data[clientTwoSummSecondPartPdv]', summRound(clientTwoResidueTotalSummGrn / 6));
+            var clientTwoSummSecondPartCursivePdv = getGrnAndCois(summRound(clientTwoResidueTotalSummGrn / 6));
+            formData.append('data[clientTwoSummSecondPartPdvCursiveGrn]', clientTwoSummSecondPartCursivePdv.bills);
+            formData.append('data[clientTwoSummSecondPartPdvCursiveKop]', getKopFromSumm(summRound(clientTwoResidueTotalSummGrn / 6)));
+          }
         }
 
         // formData.append('data[entranceSummGrn]', deposit.f21);
@@ -2173,7 +2224,7 @@ flatObj.getContract = function(type) {
               }
             );
           }else{
-            
+
             partSumm = summRound(totalSumm-totalSummWithoutLastMonth);
             $scope.selectedFlat.creditPlanArray.push(
               {
