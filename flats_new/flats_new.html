@@ -87,8 +87,8 @@
             </tr>
           </thead>
           <tbody id="flattable">
-            <tr ng-repeat="flat in flats | filter:byPriceFrom | filter:byPriceTo | filter:bySquareFrom | filter:bySquareTo"
-              ng-click="checkFlatEditable(flat)" ng-class="flat.NewClass">
+           <tr ng-repeat="flat in flats | filter:byPriceFrom | filter:byPriceTo | filter:bySquareFrom | filter:bySquareTo"
+              ng-click="checkFlatEditable(flat)" ng-class="flat.NewClass"  data-tooltip="{{flat.editManager|| 'Редактировать'}}">
               <td ng-bind="flat.f6[0].f2 + ', ' + flat.f6[0].f1"></td>
               <td ng-bind="flat.section"></td>
               <td ng-bind="flat.number"></td>

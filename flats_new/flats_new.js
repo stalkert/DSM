@@ -65,7 +65,7 @@ var mainApp = angular.module('mainApp', [])
     return this.selectedFlat;
   }
 
-  flatObj.getDiscount = function(callback, flatType, section, house) {
+ flatObj.getDiscount = function(callback, flatType, section, house) {
     var discounts = [];
     $http.get('/api/data/table?t=384')
     .success(function(data){
@@ -75,11 +75,11 @@ var mainApp = angular.module('mainApp', [])
             if(data[i].f4.indexOf("|") > -1) {
               var flatTypes = data[i].f4.split("|").filter(function(v){return v!==''});
               flatTypes.forEach(function(type) {
-                if(flatType == type) {
+                if(flatType.toLowerCase() == type.toLowerCase()) {
                   discounts.push(data[i]);
                 }
               });
-            } else if(data[i].f4 == flatType) {
+            } else if(data[i].f4.toLowerCase() == flatType.toLowerCase()) {
               discounts.push(data[i]);
             }
           }
@@ -91,25 +91,30 @@ var mainApp = angular.module('mainApp', [])
 
   flatObj.getStock = function(callback, flatType, section, house) {
     var stocks = [];
-    $http.get('/api/data/table?t=383')
+    $http.get('/api/data/table?t=383') 
     .success(function(data){
-      for(var i = data.length - 1; i >= 0; i--) {
+      for(var i = 0, l = data.length; i < l; i++) {
         if (flatObj.toMySqlFormat(data[i].f4) && flatObj.toMySqlFormat(data[i].f5)) {
           if(new Date(data[i].f4) <= new Date && new Date(data[i].f5) >= new Date) {
+            
             if(data[i].f7.indexOf("|") > -1) {
               var flatTypes = data[i].f7.split("|").filter(function(v){return v!==''});
+                
               flatTypes.forEach(function(type) {
-                if(flatType == type) {
+                  if(flatType.toLowerCase() == type.toLowerCase()) {
                   stocks.push(data[i]);
                 }
               });
-            } else if(data[i].f7 == flatType) {
+            } else if(data[i].f7.toLowerCase() == flatType.toLowerCase()) {
               stocks.push(data[i]);
             }
+            
           }
         }
       }
+     
       callback(stocks);
+       
     });
   }
 
@@ -2156,10 +2161,10 @@ flatObj.getContract = function(type) {
         }
         var totalSummWithoutLastMonth=0;
         for (var i = 0; i < $scope.selectedFlat.creditMonth; i++) {
-          
+          var newDate = new Date(new Date(new Date()).setMonth(new Date().getMonth()+ (1 + i)));
           if(i < $scope.selectedFlat.creditMonth-1){
             totalSummWithoutLastMonth += partSumm;
-          var newDate = new Date(new Date(new Date()).setMonth(new Date().getMonth()+ (1 + i)));
+          
             $scope.selectedFlat.creditPlanArray.push(
               {
                 "date" : "25-" + getTrueMonth(new Date(newDate).getMonth() +1) + "-" + new Date(newDate).getFullYear(),
@@ -2168,6 +2173,7 @@ flatObj.getContract = function(type) {
               }
             );
           }else{
+            
             partSumm = summRound(totalSumm-totalSummWithoutLastMonth);
             $scope.selectedFlat.creditPlanArray.push(
               {
