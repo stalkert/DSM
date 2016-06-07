@@ -25,6 +25,7 @@ var mainApp = angular.module('mainApp', [])
     $rootScope.dollar = data[data.length-1].f2;
   });
 
+
   flatObj.setSelectedFlat = function(selectedFlat) {
     //debugger;
     this.selectedFlat = selectedFlat;
@@ -815,7 +816,7 @@ flatObj.getContract = function(type) {
       formData.append('data[flatSummPdvCursiveKop]', getKopFromSumm(summRound(flat.price / 6)));
 
       var flatSummAllPdv = getGrnAndCois(summRound(flat.totalSumm / 6));
-      formData.append('data[flatSummAllPdv]', summRound(flat.totalSumm / 6) || " ");
+      formData.append('data[flatSummAllPdv]', summRound(flat.totalSumm / 6).toFixed(2) || " ");
       formData.append('data[flatSummAllPdvCursiveGrn]', flatSummAllPdv.bills);
       formData.append('data[flatSummAllPdvCursiveKop]', getKopFromSumm(summRound(flat.totalSumm / 6)));
 
@@ -942,7 +943,7 @@ flatObj.getContract = function(type) {
           if (flat.firstMinPaymentSumm > 1) {
             // set length for planning operation list its depends for clients array
             if (flat.creditPlanArray && flat.creditPlanArray.length > 0) {
-              creditPlanArrayLength = flat.creditPlanArray.length / 2;
+              creditPlanArrayLength = flat.creditPlanArray.length;/* / 2;*/
             }
 
             var firstPaymentSummGrn = flat.firstMinPaymentSumm;
@@ -1105,6 +1106,7 @@ flatObj.getContract = function(type) {
       formData.append('options','{"border":{"top":"10mm"}}');
 
       if (deposit && deposit.f1 == "Внесен задаток" && deposit.f9 && deposit.f6 == "Оплачено") {
+        $rootScope.ifCustomerPayedDeposit = true;
         var depositSummGrn = summRound(deposit.f21);
         formData.append('data[depositSummGrn]', depositSummGrn.toFixed(2));
         formData.append('data[depositSummCursiveGrn]', getGrnAndCois(depositSummGrn).bills);
@@ -1118,6 +1120,36 @@ flatObj.getContract = function(type) {
           formData.append('data[clientOneSummMinusDepositPdv]', summRound((flat.totalSumm-depositSummGrn) / 6).toFixed(2));
           formData.append('data[clientOneSummMinusDepositPdvCursiveGrn]', clientOneSummMinusDepositPdv.bills);
           formData.append('data[clientOneSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm-depositSummGrn) / 6))); 
+          if (flat.firstMinPaymentSumm > 1) {
+            // set length for planning operation list its depends for clients array
+            // if (flat.creditPlanArray && flat.creditPlanArray.length > 0) {
+            //   creditPlanArrayLength = flat.creditPlanArray.length / 2;
+            // }
+
+            var firstPaymentSummMinusDepositGrn = flat.firstMinPaymentSumm-depositSummGrn;
+            formData.append('data[clientFirstPaymentSummMinusDepositGrn]', summRound(firstPaymentSummMinusDepositGrn).toFixed(2));
+            var firstPaymentSummMinusDepositGrnCursive = getGrnAndCois(summRound(firstPaymentSummMinusDepositGrn));
+            formData.append('data[firstPaymentSummMinusDepositGrnCursiveGrn]', firstPaymentSummMinusDepositGrnCursive.bills);
+            formData.append('data[firstPaymentSummMinusDepositGrnCursiveKop]', getKopFromSumm(summRound(firstPaymentSummMinusDepositGrn)));
+
+            formData.append('data[clientFirstPaymentSummMinusDepositGrnPdv]', summRound(firstPaymentSummMinusDepositGrn/ 6).toFixed(2));
+            var firstPaymentSummMinusDepositGrnCursivePdv = getGrnAndCois(summRound(firstPaymentSummMinusDepositGrn / 6));
+            formData.append('data[firstPaymentSummMinusDepositCurciveGrnPdv]', firstPaymentSummMinusDepositGrnCursivePdv.bills);
+            formData.append('data[firstPaymentSummMinusDepositGrnCursiveKopPdv]', getKopFromSumm(summRound(firstPaymentSummMinusDepositGrn  / 6)));
+
+            var residueTotalSummGrn = summRound(flatTotalSummCreditGrn - flat.firstMinPaymentSumm);
+            formData.append('data[clientOneSummSecondPart]', residueTotalSummGrn.toFixed(2));
+            var clientOneSummSecondPartCursive = getGrnAndCois(residueTotalSummGrn);
+            formData.append('data[clientOneSummSecondPartCursiveGrn]', clientOneSummSecondPartCursive.bills);
+            formData.append('data[clientOneSummSecondPartCursiveKop]', getKopFromSumm(residueTotalSummGrn));
+
+            formData.append('data[clientOneSummSecondPartPdv]', summRound(residueTotalSummGrn / 6));
+            var clientOneSummSecondPartCursivePdv = getGrnAndCois(summRound(residueTotalSummGrn / 6));
+            formData.append('data[clientOneSummSecondPartPdvCursiveGrn]', clientOneSummSecondPartCursivePdv.bills);
+            formData.append('data[clientOneSummSecondPartPdvCursiveKop]', getKopFromSumm(summRound(residueTotalSummGrn / 6)));
+
+            // clientOneLastFeeSummDate clientOneLastFeeSummMonth clientOneLastFeeSummYear
+          }
         }
         if (flat.clientsArray.length == 2) {
           var clientOneSummMinusDeposit = getGrnAndCois(summRound((flat.totalSumm/2) - depositSummGrn));
@@ -1129,16 +1161,17 @@ flatObj.getContract = function(type) {
           formData.append('data[clientOneSummMinusDepositPdvCursiveGrn]', clientOneSummMinusDepositPdv.bills);
           formData.append('data[clientOneSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound(((flat.totalSumm/2)-depositSummGrn) / 6)));
 
-          var clientTwoSummMinusDeposit = getGrnAndCois(summRound(flat.totalSumm - depositSummGrn));
-          formData.append('data[clientTwoSummMinusDeposit]', summRound(flat.totalSumm-depositSummGrn).toFixed(2));
-          formData.append('data[clientTwoSummMinusDepositCursiveGrn]', clientOneSummMinusDeposit.bills);
-          formData.append('data[clientTwoSummMinusDepositCursiveKop]', getKopFromSumm(summRound(flat.totalSumm-depositSummGrn)));
-          var clientOneSummMinusDepositPdv = getGrnAndCois(summRound((flat.totalSumm-depositSummGrn) / 6));
-          formData.append('data[clientTwoSummMinusDepositPdv]', summRound((flat.totalSumm-depositSummGrn) / 6).toFixed(2));
-          formData.append('data[clientTwoSummMinusDepositPdvCursiveGrn]', clientOneSummMinusDepositPdv.bills);
-          formData.append('data[clientTwoSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm-depositSummGrn) / 6))); 
+          var clientTwoSummMinusDeposit = getGrnAndCois(summRound(flat.totalSumm/2));
+          formData.append('data[clientTwoSummMinusDeposit]', summRound(flat.totalSumm/2).toFixed(2));
+          formData.append('data[clientTwoSummMinusDepositCursiveGrn]', clientTwoSummMinusDeposit.bills);
+          formData.append('data[clientTwoSummMinusDepositCursiveKop]', getKopFromSumm(summRound(flat.totalSumm/2)));
+          var clientTwoSummMinusDepositPdv = getGrnAndCois(summRound((flat.totalSumm/2) / 6));
+          formData.append('data[clientTwoSummMinusDepositPdv]', summRound((flat.totalSumm/2) / 6).toFixed(2));
+          formData.append('data[clientTwoSummMinusDepositPdvCursiveGrn]', clientTwoSummMinusDepositPdv.bills);
+          formData.append('data[clientTwoSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm/2) / 6))); 
 
         }
+
         // formData.append('data[entranceSummGrn]', deposit.f21);
         $.ajax({
           url:'/api/data/tableRows?r='+deposit.f9.replace(/[|,]/g, ""),
@@ -1306,6 +1339,7 @@ flatObj.getContract = function(type) {
       flatObj.setSelectedFlat($rootScope.selectedFlat);
         //debugger;
         console.log($rootScope.selectedFlat);
+        $http.get('/api/data/updateRow?r=' + $rootScope.selectedFlat.field_value_id+"&data[f14]="+getUserInfo().name).success();
       }
     });
   }
@@ -1422,6 +1456,7 @@ flatObj.getContract = function(type) {
     $scope.priceTo = "";
     $scope.squareFrom = "";
     $scope.squareTo = "";
+
     $scope.byPriceFrom = function(val) {
       if (parseFloat(val.price) >= $scope.priceFrom || $scope.priceFrom == 0) {
         return true;
@@ -1474,6 +1509,14 @@ flatObj.getContract = function(type) {
       $rootScope.selectedFlat.lastOperation = lastOperation;
       $rootScope.selectedFlat.clientsArray = [];
       FlatsFactory.setClientsByLastOperationToScope(lastOperation);
+      //debugger;
+      $rootScope.unpayedDeposit = false;
+    if($rootScope.selectedFlat.lastOperation && $rootScope.selectedFlat.lastOperation.f1 == "Внесен задаток" && $rootScope.selectedFlat.lastOperation.f6 =='Ожидаем'){
+     $rootScope.unpayedDeposit = true;
+    }else if($rootScope.selectedFlat.lastOperation && $rootScope.selectedFlat.lastOperation.f1 == "Внесен задаток" && $rootScope.selectedFlat.lastOperation.f6 =='Оплачено'){
+      $rootScope.unpayedDeposit = false;
+    }
+
       if(lastOperation && lastOperation.f1) {
         setActiveTab(lastOperation.f1);
       } else {
@@ -1572,6 +1615,7 @@ flatObj.getContract = function(type) {
 .controller('FlatCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory',
   function($scope, $rootScope, $http, FlatsFactory, ClientsFactory) {
     $scope.selectedFlat = FlatsFactory.getSelectedFlat();
+
     $scope.$on('setSelectedFlatChanged', function () {
       $scope.selectedFlat = FlatsFactory.getSelectedFlat();
     });
@@ -1714,6 +1758,14 @@ flatObj.getContract = function(type) {
     ])
 .controller('BookFlatCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory',
   function($scope, $rootScope, $http, FlatsFactory, ClientsFactory) {
+
+    // if(flatObj.checkIfFlatHasDeposit(flat).f6 && flatObj.checkIfFlatHasDeposit(flat).f6=="Ожидаем"){
+    //   $rootScope.ifCustomerPayedDeposit = false;
+    // }else{
+    //   $rootScope.ifCustomerPayedDeposit = true;
+    // }
+
+    
       //Work with action BOOK
       $scope.bookFlat = function() {
         if($rootScope.selectedFlat) {
@@ -1839,6 +1891,7 @@ flatObj.getContract = function(type) {
                 console.log(result, "deposit per flat worked");
                 FlatsFactory.rewriteSelectedFlatAndImportantField($scope.selectedFlat.field_value_id);
                 Materialize.toast("Операция успешна. Вы забронировали квартиру!", 3000);
+                $http.get('/api/data/updateRow?r=' + $rootScope.selectedFlat.field_value_id+"&data[f14]="+getUserInfo().name).success(); 
               }
             });
           } else {
@@ -1933,8 +1986,15 @@ flatObj.getContract = function(type) {
         }, $scope.selectedFlat.room);
       }
     });
-
+    $rootScope.CheckDeposit= function(){
+      if($rootScope.unpayedDeposit == true){
+        return false;
+      }else{
+        return true;
+      }
+    }
     $scope.showSellFlat = function() {
+      
       if($scope.selectedFlat && $scope.selectedFlat.clientsArray && $scope.selectedFlat.clientsArray.length > 0 && $scope.selectedFlat.clientsArray.length <= 2) {
         if($scope.selectedFlat.lastOperation) {
           if($scope.selectedFlat.lastOperation.f1 !== "Продано") {
@@ -2094,15 +2154,29 @@ flatObj.getContract = function(type) {
         if ($scope.selectedFlat.clientsArray && $scope.selectedFlat.clientsArray.length == 2) {
           partSumm = summRound(partSumm / 2);
         }
+        var totalSummWithoutLastMonth=0;
         for (var i = 0; i < $scope.selectedFlat.creditMonth; i++) {
+          
+          if(i < $scope.selectedFlat.creditMonth-1){
+            totalSummWithoutLastMonth += partSumm;
           var newDate = new Date(new Date(new Date()).setMonth(new Date().getMonth()+ (1 + i)));
-          $scope.selectedFlat.creditPlanArray.push(
-          {
-            "date" : "25-" + getTrueMonth(new Date(newDate).getMonth() +1) + "-" + new Date(newDate).getFullYear(),
-            "summ": partSumm,
-            "user" : 1
+            $scope.selectedFlat.creditPlanArray.push(
+              {
+                "date" : "25-" + getTrueMonth(new Date(newDate).getMonth() +1) + "-" + new Date(newDate).getFullYear(),
+                "summ": partSumm,
+                "user" : 1
+              }
+            );
+          }else{
+            partSumm = summRound(totalSumm-totalSummWithoutLastMonth);
+            $scope.selectedFlat.creditPlanArray.push(
+              {
+                "date" : "25-" + getTrueMonth(new Date(newDate).getMonth() +1) + "-" + new Date(newDate).getFullYear(),
+                "summ": partSumm,
+                "user" : 1
+              }
+            );
           }
-          );
         }
       }
 
@@ -2466,3 +2540,13 @@ function getEndOfWordCent(param){
   }
 
 }
+function flatTooltip() {
+ $('#flattable').find('tr').tooltip({delay: 1000});
+}
+var toogleTooltip = true;
+var timerId = setInterval(function() {
+  if (toogleTooltip) {
+    flatTooltip();
+    toogleTooltip = false;
+  }
+}, 3000);

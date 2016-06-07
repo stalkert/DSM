@@ -223,7 +223,7 @@
             <li class="tab col s3" id="depositTabId">
               <a href="#depositPerFlatBlock">Задаток</a>
             </li>
-            <li class="tab col s3" id="sellTabId"><a href="#sellFlatBlock">Продажа</a></li>
+            <li class="tab col s3" id="sellTabId"><a href="#sellFlatBlock" >Продажа</a></li>
             <li class="tab col s3" id="installmentPlanTabId"><a ng-click="selectedFlat.creditMonth = 6" href="#creditFlatBlock">Рассрочка</a></li>
           </ul>
           <div id="bookContentBlock" class="action-block col s12" ng-controller="BookFlatCtrl">
@@ -277,7 +277,7 @@
             </div>
           </div>
            <div id="sellFlatBlock" class="col s6" ng-controller="SellFlatCtrl">
-              <div ng-show="showSellFlat()" >
+              <div ng-show="showSellFlat() && CheckDeposit()" >
                 <div class="" ng-show="true">
                   <label>Выберите акцию</label>
                   <select class="dropdown-stock" ng-model="selectedFlat.selectedStock" ng-disabled="selectedFlat.selectedDiscount">
@@ -294,7 +294,7 @@
                     value="{{discount.f2}}" ng-bind="discount.f2"></option>
                   </select>
                 </div>
-                <a ng-if="showSellFlat()" style="margin-top: 20px;" class="waves-effect waves-light btn" ng-click="sellFlat()">Оформить покупку</a>
+                <a ng-if="showSellFlat() && CheckDeposit()" style="margin-top: 20px;" class="waves-effect waves-light btn" ng-click="sellFlat()">Оформить покупку</a>
               </div>
               <div ng-show="showCancelSellFlat()" style="padding-top: 10px;">
                 <label for="depositPerFlatSumm">Возвращаемая сумма:</label>
@@ -304,9 +304,12 @@
               <div ng-show="selectedFlat.clientsArray.length === 0">
                 <h4>Необходимо добавить клиента!</h4>
               </div>
+              <div ng-hide="CheckDeposit()">
+                <h4>Нет данных по оплате задатка. Обратитесь к бухгалтеру.</h4>
+              </div>
           </div>
           <div id="creditFlatBlock" class="action-block col s12" ng-controller="CreditPerFlatCtrl">
-            <div ng-show="showCreditFlat()">
+            <div ng-show="showCreditFlat() && CheckDeposit()">
               <div>
                  <span>Минимальный взнос: <span ng-bind="selectedFlat.minPaymentSummOutput"></span></span>
               </div>
@@ -335,11 +338,15 @@
                  <a class="waves-effect waves-light btn" ng-click="creditFlat()">Оформить рассрочку</a>
               </div>
             </div>
-            <div ng-show="showCancelCreditFlat()">
+            <div ng-show="showCancelCreditFlat()&& CheckDeposit()">
               <label for="creditPerFlatSumm">Возвращаемая сумма:</label>
               <input ng-model="selectedFlat.returnedCreditSumm" type="number" class="validate">
               <a ng-if="showCancelCreditFlat()" class="waves-effect waves-light btn" ng-click="cancelCreditFlat()">Отмена рассрочки</a>
             </div>
+             <div ng-hide="CheckDeposit()">
+                <h4>Нет данных по оплате задатка. Обратитесь к бухгалтеру.</h4>
+              </div>
+          </div>
           </div>
 
 
