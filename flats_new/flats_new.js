@@ -65,7 +65,7 @@ var mainApp = angular.module('mainApp', [])
     return this.selectedFlat;
   }
 
- flatObj.getDiscount = function(callback, flatType, section, house) {
+  flatObj.getDiscount = function(callback, flatType, section, house) {
     var discounts = [];
     $http.get('/api/data/table?t=384')
     .success(function(data){
@@ -96,12 +96,12 @@ var mainApp = angular.module('mainApp', [])
       for(var i = 0, l = data.length; i < l; i++) {
         if (flatObj.toMySqlFormat(data[i].f4) && flatObj.toMySqlFormat(data[i].f5)) {
           if(new Date(data[i].f4) <= new Date && new Date(data[i].f5) >= new Date) {
-            
+
             if(data[i].f7.indexOf("|") > -1) {
               var flatTypes = data[i].f7.split("|").filter(function(v){return v!==''});
-                
+
               flatTypes.forEach(function(type) {
-                  if(flatType.toLowerCase() == type.toLowerCase()) {
+                if(flatType.toLowerCase() == type.toLowerCase()) {
                   stocks.push(data[i]);
                 }
               });
@@ -112,9 +112,9 @@ var mainApp = angular.module('mainApp', [])
           }
         }
       }
-     
+
       callback(stocks);
-       
+
     });
   }
 
@@ -800,51 +800,59 @@ flatObj.getContract = function(type) {
 
       formData.append('data[clientOneINN]', clientOne.INN || "");
       //debugger;
-      formData.append('data[flatRooms]', flat.room || " ");
-      formData.append('data[flatAllSquare]', flat.square || " ");
-      formData.append('data[flatLivingSquare]', flat.liveSquare || " ");
-      formData.append('data[flatFloor]', flat.floor || " ");
-      formData.append('data[flatSumm]', summRound(+flat.price).toFixed(2) || " ");
+      //new functonality start:
+      if ($rootScope.newMeterSquarePriseWithStockAndDickountReg) {
+        flat.price = $rootScope.newMeterSquarePriseWithStockAndDickountReg;
+        flat.totalSumm = flat.price * flat.square;
+      }
+      //new functonality finish:
+     
 
-      var flatSummCursive = getGrnAndCois(flat.price);
-      formData.append('data[flatSummCursiveGrn]', flatSummCursive.bills);
-      formData.append('data[flatSummCursiveKop]', getKopFromSumm(flat.price));
+    formData.append('data[flatRooms]', flat.room || " ");
+    formData.append('data[flatAllSquare]', flat.square || " ");
+    formData.append('data[flatLivingSquare]', flat.liveSquare || " ");
+    formData.append('data[flatFloor]', flat.floor || " ");
+    formData.append('data[flatSumm]', summRound(+flat.price).toFixed(2) || " ");
 
-      var flatSummAll = getGrnAndCois(summRound(flat.totalSumm));
-      formData.append('data[flatSummAll]', summRound(flat.totalSumm).toFixed(2) || " ");
-      formData.append('data[flatSummAllCursiveGrn]', flatSummAll.bills);
-      formData.append('data[flatSummAllCursiveKop]', getKopFromSumm(flat.totalSumm));
+    var flatSummCursive = getGrnAndCois(flat.price);
+    formData.append('data[flatSummCursiveGrn]', flatSummCursive.bills);
+    formData.append('data[flatSummCursiveKop]', getKopFromSumm(flat.price));
 
-      var flatSummPdv = getGrnAndCois(summRound(flat.price / 6));
-      formData.append('data[flatSummPdv]', summRound(flat.price / 6) || " ");
-      formData.append('data[flatSummPdvCursiveGrn]', flatSummPdv.bills);
-      formData.append('data[flatSummPdvCursiveKop]', getKopFromSumm(summRound(flat.price / 6)));
+    var flatSummAll = getGrnAndCois(summRound(flat.totalSumm));
+    formData.append('data[flatSummAll]', summRound(flat.totalSumm).toFixed(2) || " ");
+    formData.append('data[flatSummAllCursiveGrn]', flatSummAll.bills);
+    formData.append('data[flatSummAllCursiveKop]', getKopFromSumm(flat.totalSumm));
 
-      var flatSummAllPdv = getGrnAndCois(summRound(flat.totalSumm / 6));
-      formData.append('data[flatSummAllPdv]', summRound(flat.totalSumm / 6).toFixed(2) || " ");
-      formData.append('data[flatSummAllPdvCursiveGrn]', flatSummAllPdv.bills);
-      formData.append('data[flatSummAllPdvCursiveKop]', getKopFromSumm(summRound(flat.totalSumm / 6)));
+    var flatSummPdv = getGrnAndCois(summRound(flat.price / 6));
+    formData.append('data[flatSummPdv]', summRound(flat.price / 6) || " ");
+    formData.append('data[flatSummPdvCursiveGrn]', flatSummPdv.bills);
+    formData.append('data[flatSummPdvCursiveKop]', getKopFromSumm(summRound(flat.price / 6)));
 
-      formData.append('data[clientOnePhone]', clientOne.phone || " ");
-      formData.append('data[clientOneMail]', clientOne.email || " ");
-      formData.append('data[clientOneAddressLetter]', clientOne.homeAddress || " ");
+    var flatSummAllPdv = getGrnAndCois(summRound(flat.totalSumm / 6));
+    formData.append('data[flatSummAllPdv]', summRound(flat.totalSumm / 6).toFixed(2) || " ");
+    formData.append('data[flatSummAllPdvCursiveGrn]', flatSummAllPdv.bills);
+    formData.append('data[flatSummAllPdvCursiveKop]', getKopFromSumm(summRound(flat.totalSumm / 6)));
 
-      var dollar = $rootScope.dollar;
-      formData.append('data[dollar]', dollar);
-      var dollarCursive = getGrnAndCois(dollar);
-      formData.append('data[dollarCursiveCursiveUsd]', dollarCursive.bills);
-      formData.append('data[dollarCursiveCursiveСent]', getKopFromSumm(dollar));
-      formData.append('data[dollarCursiveCursiveСentEnd]', getEndOfWordCent(getKopFromSumm(dollar)));
+    formData.append('data[clientOnePhone]', clientOne.phone || " ");
+    formData.append('data[clientOneMail]', clientOne.email || " ");
+    formData.append('data[clientOneAddressLetter]', clientOne.homeAddress || " ");
 
-      formData.append('data[flatSummUsd]', summRound(flat.totalSumm / dollar));
-      var flatSummUsdCursive = getGrnAndCois(summRound(flat.depositPerFlatSumm / 6));
-      formData.append('data[flatSummUsdCursiveUsd]', flatSummUsdCursive.bills);
-      formData.append('data[flatSummUsdCursiveСent]', getKopFromSumm(summRound(flat.totalSumm / dollar)));
+    var dollar = $rootScope.dollar;
+    formData.append('data[dollar]', dollar);
+    var dollarCursive = getGrnAndCois(dollar);
+    formData.append('data[dollarCursiveCursiveUsd]', dollarCursive.bills);
+    formData.append('data[dollarCursiveCursiveСent]', getKopFromSumm(dollar));
+    formData.append('data[dollarCursiveCursiveСentEnd]', getEndOfWordCent(getKopFromSumm(dollar)));
 
-      formData.append('data[flatSummUsdForMeter]', summRound(flat.price / dollar));
-      var flatSummUsdForMeterCursive = getGrnAndCois(summRound(flat.price / dollar));
-      formData.append('data[flatSummUsdForMeterCursiveUsd]', flatSummUsdForMeterCursive.bills);
-      formData.append('data[flatSummUsdForMeterCursiveСent]', getKopFromSumm(summRound(flat.price / dollar)));
+    formData.append('data[flatSummUsd]', summRound(flat.totalSumm / dollar));
+    var flatSummUsdCursive = getGrnAndCois(summRound(flat.depositPerFlatSumm / 6));
+    formData.append('data[flatSummUsdCursiveUsd]', flatSummUsdCursive.bills);
+    formData.append('data[flatSummUsdCursiveСent]', getKopFromSumm(summRound(flat.totalSumm / dollar)));
+
+    formData.append('data[flatSummUsdForMeter]', summRound(flat.price / dollar));
+    var flatSummUsdForMeterCursive = getGrnAndCois(summRound(flat.price / dollar));
+    formData.append('data[flatSummUsdForMeterCursiveUsd]', flatSummUsdForMeterCursive.bills);
+    formData.append('data[flatSummUsdForMeterCursiveСent]', getKopFromSumm(summRound(flat.price / dollar)));
 
         //credit
         //debugger;
@@ -1567,70 +1575,70 @@ flatObj.getContract = function(type) {
       FlatsFactory.setClientsByLastOperationToScope(lastOperation);
       //debugger;
       $rootScope.unpayedDeposit = false;
-    if($rootScope.selectedFlat.lastOperation && $rootScope.selectedFlat.lastOperation.f1 == "Внесен задаток" && $rootScope.selectedFlat.lastOperation.f6 =='Ожидаем'){
-     $rootScope.unpayedDeposit = true;
-    }else if($rootScope.selectedFlat.lastOperation && $rootScope.selectedFlat.lastOperation.f1 == "Внесен задаток" && $rootScope.selectedFlat.lastOperation.f6 =='Оплачено'){
+      if($rootScope.selectedFlat.lastOperation && $rootScope.selectedFlat.lastOperation.f1 == "Внесен задаток" && $rootScope.selectedFlat.lastOperation.f6 =='Ожидаем'){
+       $rootScope.unpayedDeposit = true;
+     }else if($rootScope.selectedFlat.lastOperation && $rootScope.selectedFlat.lastOperation.f1 == "Внесен задаток" && $rootScope.selectedFlat.lastOperation.f6 =='Оплачено'){
       $rootScope.unpayedDeposit = false;
     }
 
-      if(lastOperation && lastOperation.f1) {
-        setActiveTab(lastOperation.f1);
+    if(lastOperation && lastOperation.f1) {
+      setActiveTab(lastOperation.f1);
+    } else {
+      setActiveTab("Забронировано");
+    }
+    FlatsFactory.setSelectedFlat($rootScope.selectedFlat);
+    console.log($rootScope.selectedFlat);
+    $('#flatModal').openModal();
+  }
+  $scope.checkFlatEditable = function(flat) {
+    $http.get('/api/data/tableRows?r=' + flat.field_value_id)
+    .success(function(data) {
+      if (parseInt(data[0].editable)) {
+        $scope.openFlatModal(flat);
+        var f = new FormData();
+        f.append('r', flat.field_value_id);
+        f.append('data[f13]', '0');
+        ajaxPost('/api/data/updateRow',f, true, function(res) {});
       } else {
-        setActiveTab("Забронировано");
+        $('#warningModal').openModal();
       }
-      FlatsFactory.setSelectedFlat($rootScope.selectedFlat);
-      console.log($rootScope.selectedFlat);
-      $('#flatModal').openModal();
-    }
-    $scope.checkFlatEditable = function(flat) {
-      $http.get('/api/data/tableRows?r=' + flat.field_value_id)
-      .success(function(data) {
-        if (parseInt(data[0].editable)) {
-          $scope.openFlatModal(flat);
-          var f = new FormData();
-          f.append('r', flat.field_value_id);
-          f.append('data[f13]', '0');
-          ajaxPost('/api/data/updateRow',f, true, function(res) {});
-        } else {
-          $('#warningModal').openModal();
-        }
-      })
-    }
-    $scope.checkIfDateIsOverdue = function(date) {
-      return new Date(date) < new Date;
-    }
-    $scope.toTrueFormat = function(date) {
-      return FlatsFactory.toTrueFormat(date);
-    }
+    })
+  }
+  $scope.checkIfDateIsOverdue = function(date) {
+    return new Date(date) < new Date;
+  }
+  $scope.toTrueFormat = function(date) {
+    return FlatsFactory.toTrueFormat(date);
+  }
 
-    function setActiveTab(lastOperationType) {
-      var activeTabId = "";
-      switch (lastOperationType) {
-        case "Забронировано":
+  function setActiveTab(lastOperationType) {
+    var activeTabId = "";
+    switch (lastOperationType) {
+      case "Забронировано":
+      activeTabId = "bookContentBlock";
+      break;
+
+      case "Внесен задаток":
+      activeTabId = "depositPerFlatBlock";
+      break;
+      case "Продано":
+      activeTabId = "sellFlatBlock";
+      break;
+      case "Доплата по рассрочке":
+      activeTabId = "creditFlatBlock";
+      break;
+      case "Рассрочка":
+      activeTabId = "creditFlatBlock";
+      break;
+      default: {
         activeTabId = "bookContentBlock";
-        break;
-
-        case "Внесен задаток":
-        activeTabId = "depositPerFlatBlock";
-        break;
-        case "Продано":
-        activeTabId = "sellFlatBlock";
-        break;
-        case "Доплата по рассрочке":
-        activeTabId = "creditFlatBlock";
-        break;
-        case "Рассрочка":
-        activeTabId = "creditFlatBlock";
-        break;
-        default: {
-          activeTabId = "bookContentBlock";
-        }
-
       }
-      $(document).ready(function(){
-        $('ul.tabs').tabs('select_tab', activeTabId);
-      });
+
     }
+    $(document).ready(function(){
+      $('ul.tabs').tabs('select_tab', activeTabId);
+    });
+  }
 
       //TODO: do this later
       $scope.updateClientData = function(clientId) {
@@ -2050,7 +2058,7 @@ flatObj.getContract = function(type) {
       }
     }
     $scope.showSellFlat = function() {
-      
+
       if($scope.selectedFlat && $scope.selectedFlat.clientsArray && $scope.selectedFlat.clientsArray.length > 0 && $scope.selectedFlat.clientsArray.length <= 2) {
         if($scope.selectedFlat.lastOperation) {
           if($scope.selectedFlat.lastOperation.f1 !== "Продано") {
@@ -2147,14 +2155,16 @@ flatObj.getContract = function(type) {
       function countFinalSummWithAllStocks() {
         if($scope.selectedFlat.selectedDiscount > 0 || $scope.selectedFlat.selectedStock > 0) {
           if ($scope.selectedFlat.selectedStock) {
+            $rootScope.newMeterSquarePriseWithStockAndDickountReg = parseFloat($scope.selectedFlat.selectedStock);
             return summRound(parseFloat($scope.selectedFlat.square) * parseFloat($scope.selectedFlat.selectedStock));
           } else {
-            return summRound(parseFloat($scope.selectedFlat.square) * (parseFloat($scope.selectedFlat.price) - parseFloat($scope.selectedFlat.selectedDiscount)));
-          }
-        } else {
-          return $scope.selectedFlat.totalSumm;
-        }
+           $rootScope.newMeterSquarePriseWithStockAndDickountReg = (parseFloat($scope.selectedFlat.price) - parseFloat($scope.selectedFlat.selectedDiscount));
+           return summRound(parseFloat($scope.selectedFlat.square) * (parseFloat($scope.selectedFlat.price) - parseFloat($scope.selectedFlat.selectedDiscount)));
+         }
+       } else {
+        return $scope.selectedFlat.totalSumm;
       }
+    }
     }
     ])
 .controller('CreditPerFlatCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory',
@@ -2209,29 +2219,30 @@ flatObj.getContract = function(type) {
         var partSumm = summRound(resultSumm / $scope.selectedFlat.creditMonth);
         if ($scope.selectedFlat.clientsArray && $scope.selectedFlat.clientsArray.length == 2) {
           partSumm = summRound(partSumm / 2);
+          totalSumm = summRound(totalSumm / 2);
         }
         var totalSummWithoutLastMonth=0;
         for (var i = 0; i < $scope.selectedFlat.creditMonth; i++) {
           var newDate = new Date(new Date(new Date()).setMonth(new Date().getMonth()+ (1 + i)));
           if(i < $scope.selectedFlat.creditMonth-1){
             totalSummWithoutLastMonth += partSumm;
-          
+
             $scope.selectedFlat.creditPlanArray.push(
-              {
-                "date" : "25-" + getTrueMonth(new Date(newDate).getMonth() +1) + "-" + new Date(newDate).getFullYear(),
-                "summ": partSumm,
-                "user" : 1
-              }
+            {
+              "date" : "25-" + getTrueMonth(new Date(newDate).getMonth() +1) + "-" + new Date(newDate).getFullYear(),
+              "summ": partSumm,
+              "user" : 1
+            }
             );
           }else{
 
             partSumm = summRound(totalSumm-totalSummWithoutLastMonth);
             $scope.selectedFlat.creditPlanArray.push(
-              {
-                "date" : "25-" + getTrueMonth(new Date(newDate).getMonth() +1) + "-" + new Date(newDate).getFullYear(),
-                "summ": partSumm,
-                "user" : 1
-              }
+            {
+              "date" : "25-" + getTrueMonth(new Date(newDate).getMonth() +1) + "-" + new Date(newDate).getFullYear(),
+              "summ": partSumm,
+              "user" : 1
+            }
             );
           }
         }
