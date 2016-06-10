@@ -1,4 +1,4 @@
-<div class="parent-div" ng-controller="FlatsCtrl">
+<div class="parent-div" ng-controller="FlatsCtrl"  >
   <div class="flax-flat-content" >
     <div class="sidebar-menu-flats left-side" >
       <div id="toggle-view-type">
@@ -207,7 +207,7 @@
                   <span ng-bind="'Сумма: ' + paymentOperation.f2 + 'грн.'"></span>
                 </span>
                 <span class="flat-payment-date" ng-bind="'До: ' + toTrueFormat(paymentOperation.f1)"></span>
-                <a href="#" ng-show="$index == 0"  class="secondary-content" style="display:none;">
+                <a href="#" ng-show="$index == 0"  class="secondary-content">
                   <i ng-click="openOperationModal(paymentOperation, selectedFlat.paymentList)" class="material-icons">add</i>
                 </a>
               </li>

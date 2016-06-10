@@ -17,16 +17,35 @@ var mainApp = angular.module('mainApp', [])
   'листопада',
   'грудня'
   ];
+ // flatObj.typeUserAccept =function(){
+ //   var typeNumber = +getUserInfo().type.slice(-2,-1);
+ //   //debugger;
+ //    return showFlats(typeNumber);
+ // } 
+ // function showFlats(typeAcceptNumber){
+ //  switch(typeAcceptNumber){
+ //    case 1:
+ //    case 2:
+ //    case 4:
+ //    case 5:
+ //    case 7:
+ //      return true;
+ //    case 3:
+ //      return false;  
+ //    default:
+ //     return false;
+ //  }
 
-  flatObj.selectedFlat = {};
+ // }
+ flatObj.selectedFlat = {};
 
-  $http.get('/api/data/table?t=385')
-  .success(function(data){
-    $rootScope.dollar = data[data.length-1].f2;
-  });
+ $http.get('/api/data/table?t=385')
+ .success(function(data){
+  $rootScope.dollar = data[data.length-1].f2;
+});
 
 
-  flatObj.setSelectedFlat = function(selectedFlat) {
+ flatObj.setSelectedFlat = function(selectedFlat) {
     //debugger;
     this.selectedFlat = selectedFlat;
     this.selectedFlat.minPaymentSumm = getMinPaymentSumm(selectedFlat);
@@ -806,53 +825,53 @@ flatObj.getContract = function(type) {
         flat.totalSumm = flat.price * flat.square;
       }
       //new functonality finish:
-     
 
-    formData.append('data[flatRooms]', flat.room || " ");
-    formData.append('data[flatAllSquare]', flat.square || " ");
-    formData.append('data[flatLivingSquare]', flat.liveSquare || " ");
-    formData.append('data[flatFloor]', flat.floor || " ");
-    formData.append('data[flatSumm]', summRound(+flat.price).toFixed(2) || " ");
 
-    var flatSummCursive = getGrnAndCois(flat.price);
-    formData.append('data[flatSummCursiveGrn]', flatSummCursive.bills);
-    formData.append('data[flatSummCursiveKop]', getKopFromSumm(flat.price));
+      formData.append('data[flatRooms]', flat.room || " ");
+      formData.append('data[flatAllSquare]', flat.square || " ");
+      formData.append('data[flatLivingSquare]', flat.liveSquare || " ");
+      formData.append('data[flatFloor]', flat.floor || " ");
+      formData.append('data[flatSumm]', summRound(+flat.price).toFixed(2) || " ");
 
-    var flatSummAll = getGrnAndCois(summRound(flat.totalSumm));
-    formData.append('data[flatSummAll]', summRound(flat.totalSumm).toFixed(2) || " ");
-    formData.append('data[flatSummAllCursiveGrn]', flatSummAll.bills);
-    formData.append('data[flatSummAllCursiveKop]', getKopFromSumm(flat.totalSumm));
+      var flatSummCursive = getGrnAndCois(flat.price);
+      formData.append('data[flatSummCursiveGrn]', flatSummCursive.bills);
+      formData.append('data[flatSummCursiveKop]', getKopFromSumm(flat.price));
 
-    var flatSummPdv = getGrnAndCois(summRound(flat.price / 6));
-    formData.append('data[flatSummPdv]', summRound(flat.price / 6) || " ");
-    formData.append('data[flatSummPdvCursiveGrn]', flatSummPdv.bills);
-    formData.append('data[flatSummPdvCursiveKop]', getKopFromSumm(summRound(flat.price / 6)));
+      var flatSummAll = getGrnAndCois(summRound(flat.totalSumm));
+      formData.append('data[flatSummAll]', summRound(flat.totalSumm).toFixed(2) || " ");
+      formData.append('data[flatSummAllCursiveGrn]', flatSummAll.bills);
+      formData.append('data[flatSummAllCursiveKop]', getKopFromSumm(flat.totalSumm));
 
-    var flatSummAllPdv = getGrnAndCois(summRound(flat.totalSumm / 6));
-    formData.append('data[flatSummAllPdv]', summRound(flat.totalSumm / 6).toFixed(2) || " ");
-    formData.append('data[flatSummAllPdvCursiveGrn]', flatSummAllPdv.bills);
-    formData.append('data[flatSummAllPdvCursiveKop]', getKopFromSumm(summRound(flat.totalSumm / 6)));
+      var flatSummPdv = getGrnAndCois(summRound(flat.price / 6));
+      formData.append('data[flatSummPdv]', summRound(flat.price / 6) || " ");
+      formData.append('data[flatSummPdvCursiveGrn]', flatSummPdv.bills);
+      formData.append('data[flatSummPdvCursiveKop]', getKopFromSumm(summRound(flat.price / 6)));
 
-    formData.append('data[clientOnePhone]', clientOne.phone || " ");
-    formData.append('data[clientOneMail]', clientOne.email || " ");
-    formData.append('data[clientOneAddressLetter]', clientOne.homeAddress || " ");
+      var flatSummAllPdv = getGrnAndCois(summRound(flat.totalSumm / 6));
+      formData.append('data[flatSummAllPdv]', summRound(flat.totalSumm / 6).toFixed(2) || " ");
+      formData.append('data[flatSummAllPdvCursiveGrn]', flatSummAllPdv.bills);
+      formData.append('data[flatSummAllPdvCursiveKop]', getKopFromSumm(summRound(flat.totalSumm / 6)));
 
-    var dollar = $rootScope.dollar;
-    formData.append('data[dollar]', dollar);
-    var dollarCursive = getGrnAndCois(dollar);
-    formData.append('data[dollarCursiveCursiveUsd]', dollarCursive.bills);
-    formData.append('data[dollarCursiveCursiveСent]', getKopFromSumm(dollar));
-    formData.append('data[dollarCursiveCursiveСentEnd]', getEndOfWordCent(getKopFromSumm(dollar)));
+      formData.append('data[clientOnePhone]', clientOne.phone || " ");
+      formData.append('data[clientOneMail]', clientOne.email || " ");
+      formData.append('data[clientOneAddressLetter]', clientOne.homeAddress || " ");
 
-    formData.append('data[flatSummUsd]', summRound(flat.totalSumm / dollar));
-    var flatSummUsdCursive = getGrnAndCois(summRound(flat.depositPerFlatSumm / 6));
-    formData.append('data[flatSummUsdCursiveUsd]', flatSummUsdCursive.bills);
-    formData.append('data[flatSummUsdCursiveСent]', getKopFromSumm(summRound(flat.totalSumm / dollar)));
+      var dollar = $rootScope.dollar;
+      formData.append('data[dollar]', dollar);
+      var dollarCursive = getGrnAndCois(dollar);
+      formData.append('data[dollarCursiveCursiveUsd]', dollarCursive.bills);
+      formData.append('data[dollarCursiveCursiveСent]', getKopFromSumm(dollar));
+      formData.append('data[dollarCursiveCursiveСentEnd]', getEndOfWordCent(getKopFromSumm(dollar)));
 
-    formData.append('data[flatSummUsdForMeter]', summRound(flat.price / dollar));
-    var flatSummUsdForMeterCursive = getGrnAndCois(summRound(flat.price / dollar));
-    formData.append('data[flatSummUsdForMeterCursiveUsd]', flatSummUsdForMeterCursive.bills);
-    formData.append('data[flatSummUsdForMeterCursiveСent]', getKopFromSumm(summRound(flat.price / dollar)));
+      formData.append('data[flatSummUsd]', summRound(flat.totalSumm / dollar));
+      var flatSummUsdCursive = getGrnAndCois(summRound(flat.depositPerFlatSumm / 6));
+      formData.append('data[flatSummUsdCursiveUsd]', flatSummUsdCursive.bills);
+      formData.append('data[flatSummUsdCursiveСent]', getKopFromSumm(summRound(flat.totalSumm / dollar)));
+
+      formData.append('data[flatSummUsdForMeter]', summRound(flat.price / dollar));
+      var flatSummUsdForMeterCursive = getGrnAndCois(summRound(flat.price / dollar));
+      formData.append('data[flatSummUsdForMeterCursiveUsd]', flatSummUsdForMeterCursive.bills);
+      formData.append('data[flatSummUsdForMeterCursiveСent]', getKopFromSumm(summRound(flat.price / dollar)));
 
         //credit
         //debugger;
@@ -1520,6 +1539,8 @@ flatObj.getContract = function(type) {
     $scope.priceTo = "";
     $scope.squareFrom = "";
     $scope.squareTo = "";
+    //debugger;
+    //$rootScope.accept = FlatsFactory.typeUserAccept();
 
     $scope.byPriceFrom = function(val) {
       if (parseFloat(val.price) >= $scope.priceFrom || $scope.priceFrom == 0) {
@@ -1567,6 +1588,7 @@ flatObj.getContract = function(type) {
         //   }
         // })
       });
+    
     $scope.openFlatModal = function(flat) {
       var lastOperation = FlatsFactory.getLastOperationByFlat(flat);
       $rootScope.selectedFlat = flat;
@@ -2165,8 +2187,8 @@ flatObj.getContract = function(type) {
         return $scope.selectedFlat.totalSumm;
       }
     }
-    }
-    ])
+  }
+  ])
 .controller('CreditPerFlatCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory',
   function($scope, $rootScope, $http, FlatsFactory, ClientsFactory) {
    //debugger;
