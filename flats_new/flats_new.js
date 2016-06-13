@@ -1570,9 +1570,18 @@ flatObj.getContract = function(type) {
         return false;
       }
     }
-    FlatsFactory.getFlats(function(flats) {
+ $scope.viewMode = "list";
+        $scope.setViewMode = function (mode) {
+        $scope.viewMode = mode;
+    }
+    
+  
+   
+   FlatsFactory.getFlats(function(flats) {  
+      /*flat.f6[0].f2*/
       $rootScope.flats = flats;
-        // flats.forEach(function(item) {
+      //do not delete
+      // flats.forEach(function(item) {
         //   if(item) {
         //     FlatsFactory.clearF8AndF9Fields(item);
         //     console.log(true);
@@ -1587,7 +1596,77 @@ flatObj.getContract = function(type) {
         //     // }
         //   }
         // })
-      });
+    
+    
+    $scope.chessFlats = makeHouseArr('Петровская'); 
+    /*debugger;  */ 
+        
+    });
+    
+     $scope.changeHouse = function (house) {
+       $scope.chessFlats = makeHouseArr(house);
+     }
+     
+     function makeHouseArr(houseName) { 
+         var sortBySection = [];
+         
+         for (var fl in $rootScope.flats){ 
+
+         if ($rootScope.flats[fl].f6) {
+          if(houseName === $rootScope.flats[fl].f6[0].f2) {  
+            sortBySection.push($rootScope.flats[fl]); 
+          }
+         }
+          
+        }
+         
+        function compare(a, b) {
+            if (a.section > b.section) return 1;
+            if (a.section < b.section) return -1;
+        }
+        function compareFloor(a, b) {
+            if (a.floor > b.floor) return 1;
+            if (a.floor < b.floor) return -1;
+        }
+      var sortedBeSection = sortBySection.sort(compare);
+       var sectionKey = 0;
+       var sectionFromKey = sortedBeSection[0].section;
+       var sortWithSection = [];
+       sortWithSection[sectionKey] = [];
+       
+       for (var thisFlat in sortedBeSection) {
+           if (sectionFromKey !== sortedBeSection[thisFlat].section) {
+             sectionKey++;
+             sortWithSection[sectionKey] = [];
+             sectionFromKey = sortedBeSection[thisFlat].section;
+            }
+         sortWithSection[sectionKey].push(sortedBeSection[thisFlat]);
+       }
+      var lastSort = []
+       for (var thisSection in sortWithSection) {
+           
+         var middleArray  = sortWithSection[thisSection].sort(compareFloor)
+         var floorKey = 0;
+         var firstFloor = middleArray[0].floor;
+         var sortWithFloors = [];
+         sortWithFloors[floorKey] = [];
+         
+         for (var thatFlat in middleArray) {
+             if (firstFloor !== middleArray[thatFlat].floor) {
+             floorKey++;
+             sortWithFloors[floorKey] = [];
+             firstFloor = middleArray[thatFlat].floor; 
+            }
+            sortWithFloors[floorKey].push(middleArray[thatFlat]);
+         }
+          
+         lastSort.push( sortWithFloors );
+             
+       }
+       
+       return lastSort;   
+        
+     }
     
     $scope.openFlatModal = function(flat) {
       var lastOperation = FlatsFactory.getLastOperationByFlat(flat);

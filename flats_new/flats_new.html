@@ -1,14 +1,14 @@
-<div class="parent-div" ng-controller="FlatsCtrl"  >
+<div class="parent-div" ng-controller="FlatsCtrl">
   <div class="flax-flat-content" >
     <div class="sidebar-menu-flats left-side" >
       <div id="toggle-view-type">
-        <a href="#list" class="waves-effect waves-light btn tab-flats disabled" onclick="printFlatTable();"><i class="material-icons right ">reorder</i></a>
-        <a href="#chess" class="waves-effect waves-light btn tab-flats " onclick="printHouseList();"><i class="material-icons right">dashboard</i></a>
+        <a href="#list" class="waves-effect waves-light btn  " ng-click="setViewMode('list')"><i class="material-icons right ">reorder</i></a> 
+        <a href="#chess" class="waves-effect waves-light btn " ng-click="setViewMode('chess')"><i class="material-icons right">dashboard</i></a>
       </div>
       <!--<div id="toggle-view-type">-->
       <!--</div>-->
       <ul class="collapsible" data-collapsible="expandable" id="typeFilterMenu">
-        <div class="flat-filter active-filter">
+        <div ng-show="viewMode == 'list'" class="flat-filter active-filter">
 
 
           <!--<li class="flat-filter active-filter">-->
@@ -62,6 +62,10 @@
           <!--</div>-->
           <!--</li>-->
         </div>
+        <div class="flat-filter active-filter" ng-show="viewMode == 'chess'">
+            <div ng-click="changeHouse('Петровская')" class='leftBarChess'>Петровская</div>
+            <div ng-click="changeHouse('Белогородская')" class='leftBarChess'>Белогородская</div> 
+        </div>
         <li class="house-filter">
           <div class="collapsible-header"><i class="material-icons">location_city</i>Дом</div>
           <div class="collapsible-body" id="housesList">
@@ -70,14 +74,14 @@
       </ul>
     </div>
     <div class="right-side">
-      <div id="list" class="tab-report-node">
-        <table class="bordered striped responsive-table">
+      <div id="list" class="tab-report-node" ng-switch on="viewMode">
+        <table class="bordered striped responsive-table" ng-switch-when="list"> 
           <thead>
             <tr>
               <th data-field="address">Адрес</th>
               <th data-field="section">Секция</th>
               <th data-field="id">Номер</th>
-              <th data-field="name">Этаж</th>
+              <th data-field="name">Этаж</th> 
               <th data-field="room">Комнат</th>
               <th data-field="square">Площадь</th>
               <th data-field="price">Стоимость кв.м.</th>
@@ -87,10 +91,10 @@
             </tr>
           </thead>
           <tbody id="flattable">
-           <tr ng-repeat="flat in flats | filter:byPriceFrom | filter:byPriceTo | filter:bySquareFrom | filter:bySquareTo"
-              ng-click="checkFlatEditable(flat)" ng-class="flat.NewClass"  data-tooltip="{{flat.editManager|| 'Редактировать'}}">
+            <tr ng-repeat="flat in flats | filter:byPriceFrom | filter:byPriceTo | filter:bySquareFrom | filter:bySquareTo"
+              ng-click="checkFlatEditable(flat)" ng-class="flat.NewClass"  data-tooltip="{{flat.editManager || 'не обработано'}}">
               <td ng-bind="flat.f6[0].f2 + ', ' + flat.f6[0].f1"></td>
-              <td ng-bind="flat.section"></td>
+              <td ng-bind="flat.section" ></td>
               <td ng-bind="flat.number"></td>
               <td ng-bind="flat.floor"></td>
               <td ng-bind="flat.room"></td>
@@ -101,13 +105,26 @@
               <td><i class="material-icons">zoom_out_map</i></td>
             </tr>
           </tbody>
-        </table>
-
-        <div id="flats-page-nav"></div>
+        </table> 
+        <div ng-switch-when="chess" ng-repeat="section in chessFlats" >
+            <div class="section-wrap">
+                <div  class="section-title"><strong>{{section[0][0].section}}</strong></div>
+                <table class='chess-table'>
+                    <tr ng-repeat="floor in section" class="floor-tr"> 
+                        <td ng-bind="floor[0].floor" class="first-chess-td"></td>  
+                        <td ng-repeat="flat in floor" ng-click="checkFlatEditable(flat)" ng-bind="flat.number" ng-class="flat.NewClass" data-tooltip="{{flat.editManager || 'не обработано'}}"> 
+                            
+                        </td>    
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!--<div id="flats-page-nav">s</div>-->
       </div>
 
-      <div id="chess" class="tab-flats-node">
-      </div>
+      <!--<div id="chess" class="tab-flats-node">
+        
+      </div>-->
 
       <!-- Modal Structure -->
       <div id="modal1" class="modal">
