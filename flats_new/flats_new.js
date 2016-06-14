@@ -1541,7 +1541,7 @@ flatObj.getContract = function(type) {
     $scope.squareTo = "";
     //debugger;
     //$rootScope.accept = FlatsFactory.typeUserAccept();
-
+    $scope.listCtrlr = true;
     $scope.byPriceFrom = function(val) {
       if (parseFloat(val.price) >= $scope.priceFrom || $scope.priceFrom == 0) {
         return true;
@@ -1574,7 +1574,18 @@ flatObj.getContract = function(type) {
         $scope.setViewMode = function (mode) {
         $scope.viewMode = mode;
     }
-    
+     $scope.viewMode = "list";
+        $scope.setViewMode = function (mode) {
+        $scope.viewMode = mode;
+        if (mode == "list") {
+            $scope.ChessCtrlr = false;
+            $scope.listCtrlr = true;
+        }
+        if (mode == "chess") {
+            $scope.ChessCtrlr = true;
+            $scope.listCtrlr = false;
+        }
+    }
   
    
    FlatsFactory.getFlats(function(flats) {  
@@ -2054,6 +2065,7 @@ flatObj.getContract = function(type) {
             FlatsFactory.updateFlatOperationField(newOperationId, function(result) {
               if (result) {
                 console.log(result, "deposit per flat worked");
+                $rootScope.unpayedDeposit = true;
                 FlatsFactory.rewriteSelectedFlatAndImportantField($scope.selectedFlat.field_value_id);
                 Materialize.toast("Операция успешна. Вы забронировали квартиру!", 3000);
                 $http.get('/api/data/updateRow?r=' + $rootScope.selectedFlat.field_value_id+"&data[f14]="+getUserInfo().name).success(); 

@@ -3,6 +3,7 @@
 }
 
 .right-side {
+ width: 100%;
   margin: 0 auto;
 }
 .active-tab {
@@ -346,4 +347,47 @@ footer.page-footer.blue.darken-2{
 .remove-client-icon {
   display: inline-block;
   float: right;
+}
+
+.section-wrap {
+ float: left;
+ width: 350px;
+}
+
+.chess-table {
+  width: 100%;
+  max-width: 600px;
+  height: 320px;
+  border-collapse: collapse;
+  border: 1px solid #38678f;
+  margin: 10px auto;
+  background: white; 
+}
+
+.section-wrap td{
+    border: 1px solid #cccccc;
+    text-align: center; 
+}
+
+.section-wrap td:not(:first-child) {
+    cursor:pointer;
+}
+
+.section-title {
+    width: 50px ;
+    margin: 0 auto;
+}
+
+.first-chess-td {
+    padding-left: 5px !important;
+    width: 20px !important;
+    background-color: silver ;
+}
+
+.leftBarChess {
+    cursor: pointer; 
+    color: #686868;
+    margin: 5px 0;
+    width: 228px;
+    border-bottom: 1px solid silver;
 }

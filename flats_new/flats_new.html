@@ -2,8 +2,8 @@
   <div class="flax-flat-content" >
     <div class="sidebar-menu-flats left-side" >
       <div id="toggle-view-type">
-        <a href="#list" class="waves-effect waves-light btn  " ng-click="setViewMode('list')"><i class="material-icons right ">reorder</i></a> 
-        <a href="#chess" class="waves-effect waves-light btn " ng-click="setViewMode('chess')"><i class="material-icons right">dashboard</i></a>
+        <a href="#list" class="waves-effect waves-light btn list-toogle" ng-class="{disabled: listCtrlr}" ng-click="setViewMode('list')"><i class="material-icons right ">reorder</i></a> 
+        <a href="#chess" class="waves-effect waves-light btn chess-toogle" ng-class="{disabled: ChessCtrlr}" ng-click="setViewMode('chess')"><i class="material-icons right">dashboard</i></a>
       </div>
       <!--<div id="toggle-view-type">-->
       <!--</div>-->
