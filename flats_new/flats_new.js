@@ -294,7 +294,16 @@ var mainApp = angular.module('mainApp', [])
         callback(flatObj.dataUpdate($rootScope.selectedFlat.field_value_id, data));
       }
     }
-
+    function getClientById(clientId){
+    	var f = new FormData();
+    	f.append('r',clientId);
+    	var clientFIO 
+    	ajaxPost('/api/data/tableRows',f,false,function(data){
+    		clientFIO = JSON.parse(data)
+    		
+    	});
+    	return clientFIO[0].name;
+    }
     function getClientsIdFromSelectedClientsArrayInScope() {
       if($rootScope.selectedFlat.clientsArray) {
         var clientIdBetweenPipes = "|";
@@ -306,6 +315,7 @@ var mainApp = angular.module('mainApp', [])
         return null;
       }
     }
+
     function fillGenericFlatFields(formData, flat, type) {
       formData.append('snippet', getSnippetId(flat, type));
       formData.append('data[testImg]', getFloorImg(flat.floor, flat.section) || "");
@@ -1302,7 +1312,7 @@ flatObj.getContract = function(type) {
     }
 
     //Work with operation table
-    flatObj.addOperationToOperationTable = function(type, summ, dollar, operationBlockId, datePickerId) {
+    flatObj.addOperationToOperationTable = function(type, summ, dollar, operationBlockId, datePickerId,clientFIO) {
       var newOperationId = null,
       date;
       if(operationBlockId && datePickerId) {
@@ -1315,6 +1325,12 @@ flatObj.getContract = function(type) {
       //TODO: Add dollar course
       //debugger;
       if(type && summ >= 0 && date && getClientsIdFromSelectedClientsArrayInScope() != null) {
+        var payer;
+		if(clientFIO){
+			payer = clientFIO;
+		}else{
+			payer ='';
+		}
         var newOperationObj = {
           'f1':   type,
           'f2':   date,
@@ -1325,7 +1341,8 @@ flatObj.getContract = function(type) {
           'f4':   getClientsIdFromSelectedClientsArrayInScope(),
           'f5':   flatObj.getContract(type),
           'f6':   'Ожидаем',
-          'f23':  dollar
+          'f23':  dollar,
+          'f10':payer
         }
 
         newOperationId = flatObj.dataAdd(295, newOperationObj);
@@ -1339,13 +1356,15 @@ flatObj.getContract = function(type) {
     //Work with planning operation table
     flatObj.addPlanningOperationToPlanningOparationTable = function(summ, date, clientId) {
       var newPlanningOperationId = null;
-
+      //debugger;
+      var clientFIO = getClientById(clientId);
       if (date && summ > 0 && clientId) {
         var newPlanningOperationObj = {
           'f1' : date,
           'f2' : summ,
           'f3' : "Ожидаем",
-          'f4' : clientId
+          'f4' : clientFIO
+
         }
         newPlanningOperationId = flatObj.dataAdd(297, newPlanningOperationObj);
         console.log("newPlanningOperationId", newPlanningOperationId);
@@ -1382,6 +1401,7 @@ flatObj.getContract = function(type) {
       if (flat) {
         //debugger;
         //console.log($rootScope.creditMonth);
+        var clientsForPlannedOperationView =$rootScope.selectedFlat.clientsArray
         $rootScope.selectedFlat = flat[0];
         $rootScope.selectedFlat.clientsArray = [];
         $rootScope.selectedFlat.historyList = [];
@@ -1411,9 +1431,15 @@ flatObj.getContract = function(type) {
       $rootScope.selectedFlat.paymentList = flat[0].f9;
       if(flat[0].f9 && flat[0].f9.length > 0) {
         $rootScope.selectedFlat.paymentList.forEach(function(item) {
-          item.f1 = item.date;
-          item.f2 = item.summ;
-          item.f3 = item.status;
+         	item.f1 = item.date;
+         	item.f2 = item.summ;
+         	item.f3 = item.status;
+         	item.f4 = item.client
+   //       	clientsForPlannedOperationView.forEach(function(client){
+			// 	if(item.client == client.field_value_id){
+			// 		item.f5 = client.name;
+			// 	}
+			// });
         })
       }
       if (getUserInfo()) {
@@ -1747,9 +1773,9 @@ flatObj.getContract = function(type) {
       }
 
     }
-    $(document).ready(function(){
-      $('ul.tabs').tabs('select_tab', activeTabId);
-    });
+    //$(document).ready(function(){
+      //$('ul.tabs').tabs('select_tab', activeTabId);
+   // });
   }
 
       //TODO: do this later
@@ -2472,12 +2498,12 @@ flatObj.getContract = function(type) {
       $scope.selectedFlat = FlatsFactory.getSelectedFlat();
     });
 
-    $scope.setPaymentOperation = function() {
+    $scope.setPaymentOperation = function(clientFIO) {
       if ($scope.selectedFlat && $scope.selectedFlat.paymentOperation && $scope.paymentOperationEnteredSumm) {
           if ($scope.paymentOperationEnteredSumm == $scope.selectedFlat.paymentOperation.f2) { // только один клиент и только когда задаток равен
             FlatsFactory.dataDelete($scope.selectedFlat.paymentOperation.field_value_id, function(deletePlanningOperationResult) {
               if(deletePlanningOperationResult == "ok") {
-                var newOperationId = FlatsFactory.addOperationToOperationTable("Доплата по рассрочке", $scope.paymentOperationEnteredSumm);
+                var newOperationId = FlatsFactory.addOperationToOperationTable("Доплата по рассрочке", $scope.paymentOperationEnteredSumm,undefined,undefined,undefined,clientFIO);
                 FlatsFactory.updateFlatOperationField(newOperationId, function(updateOperationFieldInFlatTableStatus) {
                   if(updateOperationFieldInFlatTableStatus) {
                     console.log(updateOperationFieldInFlatTableStatus, "plannedOperation per flat worked");

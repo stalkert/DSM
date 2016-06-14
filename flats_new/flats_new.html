@@ -224,7 +224,10 @@
                   <span ng-bind="'Сумма: ' + paymentOperation.f2 + 'грн.'"></span>
                 </span>
                 <span class="flat-payment-date" ng-bind="'До: ' + toTrueFormat(paymentOperation.f1)"></span>
-                <a href="#" ng-show="$index == 0"  class="secondary-content">
+                <span class="title" ng-show="paymentOperation.f4">
+                  <span ng-bind="'&nbsp&nbsp&nbsp' + paymentOperation.f4 "></span>
+                </span>
+                <a href="#" ng-show="true"  class="secondary-content">
                   <i ng-click="openOperationModal(paymentOperation, selectedFlat.paymentList)" class="material-icons">add</i>
                 </a>
               </li>
@@ -391,6 +394,9 @@
 </div>
 <div id="plannedOperationModal" class="modal bottom-sheet" ng-controller="PlannedOperationCtrl">
   <div class="modal-content">
+  <div class="input-field col s12">
+          <label style="position: initial">Плательщик: </label><span ng-bind="selectedFlat.paymentOperation.f4"></span>
+      </div>
       <div class="input-field col s12">
           <label style="position: initial">Сумма к оплате: </label><span ng-bind="selectedFlat.paymentOperation.f2"></span>
       </div>
@@ -399,7 +405,7 @@
           <input placeholder="Сумма" ng-model="paymentOperationEnteredSumm" value=0 type="text" class="validate">
       </div>
       <div>
-          <a ng-click="setPaymentOperation()" class="waves-effect blue darken-2 btn">Оплатить</a>
+          <a ng-click="setPaymentOperation(selectedFlat.paymentOperation.f4)" class="waves-effect blue darken-2 btn">Оплатить</a>
       </div>
   </div>
   <div class="modal-footer">
