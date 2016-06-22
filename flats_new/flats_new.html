@@ -87,6 +87,7 @@
               <th data-field="price">Стоимость кв.м.</th>
               <th data-field="cost">Общая стоимость</th>
               <th data-field="finalDate">Конечная дата</th>
+              <th data-field="finalDate">Редактирует:</th>
               <th></th>
             </tr>
           </thead>
@@ -95,13 +96,14 @@
               ng-click="checkFlatEditable(flat)" ng-class="flat.NewClass"  data-tooltip="{{flat.editManager || 'не обработано'}}">
               <td ng-bind="flat.f6[0].f2 + ', ' + flat.f6[0].f1"></td>
               <td ng-bind="flat.section" ></td>
-              <td ng-bind="flat.number"></td>
+              <td ng-bind="flat.f1"></td>
               <td ng-bind="flat.floor"></td>
               <td ng-bind="flat.room"></td>
               <td ng-bind="flat.square"></td>
               <td ng-bind="flat.price"></td>
               <td ng-bind="flat.totalSumm + 'грн.'"></td>
               <td ng-bind="flat.finalDate"></td>
+              <td ng-bind="flat.f15"></td>
               <td><i class="material-icons">zoom_out_map</i></td>
             </tr>
           </tbody>
@@ -112,7 +114,7 @@
                 <table class='chess-table'>
                     <tr ng-repeat="floor in section" class="floor-tr"> 
                         <td ng-bind="floor[0].floor" class="first-chess-td"></td>  
-                        <td ng-repeat="flat in floor" ng-click="checkFlatEditable(flat)" ng-bind="flat.number" ng-class="flat.NewClass" data-tooltip="{{flat.editManager || 'не обработано'}}"> 
+                        <td ng-repeat="flat in floor" ng-click="checkFlatEditable(flat)" ng-bind="flat.f1" ng-class="flat.NewClass" data-tooltip="{{flat.editManager || 'не обработано'}}"> 
                             
                         </td>    
                     </tr>
@@ -159,7 +161,7 @@
     <div class="modal-content">
       <div class="row">
         <div class="col m6 s6">
-          <h4>Квартира №<span class="flat-number" ng-bind="selectedFlat.number"></span>
+          <h4>Квартира №<span class="flat-number" ng-bind="selectedFlat.f1"></span>
             <small>
               <span class="flat-house-address" ng-bind="selectedFlat.f6[0].f2"></span>,
                 <span class="flat-house-number" ng-bind="selectedFlat.f6[0].f1">10</span>
@@ -207,6 +209,7 @@
                   <span ng-bind="history.f21 + 'грн.'"></span>
                   <span class="flatPaymentStatus" ng-bind="history.f6"></span>
                   <span ng-bind="toTrueFormat(history.date)"></span>
+                  <span ng-bind="history.f10"></span>
                 </span>
                 <span ng-if="history.f1 == 'Забронировано'" ng-bind="'менеджер:' + selectedFlat.manager.name"></span>
                 <span ng-hide="history.f1 === 'Забронировано' || history.f1 === 'Доплата по рассрочке'">
@@ -419,54 +422,66 @@
   </ul>
     <div id="addClientModalPart" class="modal-content">
         <div class="row">
-            <div class="input-field col s6">
-                <input placeholder="ФИО клиента" id="userValname" type="text" class="validate">
-                <label for="userValname">ФИО</label>
-            </div>
-            <div class="input-field col s6">
-                <input placeholder="Номер телефона клиента" id="userValphone" type="text" class="validate">
-                <label for="userValphone">Телефон</label>
-            </div>
-            <div class="input-field col s6">
-                <input placeholder="E-mail клиента" id="userValemail" type="text" class="validate">
-                <label for="userValemail">E-mail</label>
-            </div>
-            <div class="file-field input-field col s6">
-                <div class="btn">
-                    <span>Фото</span>
-                    <input type="file" id="userValFilephoto">
-                </div>
-                <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text" placeholder="Фотография клиента" id="userValphoto">
-                </div>
-            </div>
-            <div class="input-field col s6">
-                <input placeholder="Серия паспорта клиента" id="userValpassportSerialKey" type="text" class="validate">
-                <label for="userValpassportSerialKey">Серия паспорта</label>
-            </div>
-            <div class="input-field col s6">
-                <input placeholder="Номер паспорта клиента" id="userValpassportSerialNum" type="text" class="validate">
-                <label for="userValpassportSerialNum">Номер паспорта</label>
-            </div>
-            <div class="input-field col s6">
-                <input placeholder="Кем выдан паспорт клиента" id="userValwhoGavePassport" type="text" class="validate">
-                <label for="userValwhoGavePassport">Кем выдан паспорт</label>
-            </div>
-            <div class="input-field col s6">
-                <input placeholder="Адрес прописки клиента" id="userValregistrationAddress" type="text" class="validate">
-                <label for="userValregistrationAddress">Адрес прописки</label>
-            </div>
-            <div class="input-field col s6">
-                <input placeholder="Адрес проживания клиента" id="userValhomeAddress" type="text" class="validate">
-                <label for="userValhomeAddress">Адрес проживания</label>
-            </div>
-            <div class="input-field col s6">
-                <input placeholder="ИНН клиента" id="userValINN" type="text" class="validate">
-                <label for="userValINN">ИНН</label>
-            </div>
-            <div>
-                <a ng-click="addNewClientAndSave()" id="addBtn" class="waves-effect blue darken-2 btn">Добавить</a>
-            </div>
+            <form name="addClientForm">
+              <div class="input-field col s6">
+                  <input placeholder="ФИО клиента" id="userValname" type="text" class="validate">
+                  <label for="userValname">ФИО</label>
+              </div>
+              <div class="input-field col s6">
+                  <input placeholder="Номер телефона клиента" id="userValphone" type="text" class="validate">
+                  <label for="userValphone">Телефон</label>
+              </div>
+              <div class="input-field col s6">
+                  <input placeholder="E-mail клиента" id="userValemail" type="text" class="validate">
+                  <label for="userValemail">E-mail</label>
+              </div>
+              <div class="file-field input-field col s6">
+                  <div class="btn">
+                      <span>Фото</span>
+                      <input type="file" id="userValFilephoto">
+                  </div>
+                  <div class="file-path-wrapper">
+                      <input class="file-path validate" type="text" placeholder="Фотография клиента" id="userValphoto">
+                  </div>
+              </div>
+              <div class="input-field col s6">
+                  <input placeholder="Серия паспорта клиента" id="userValpassportSerialKey" type="text" class="validate">
+                  <label for="userValpassportSerialKey">Серия паспорта</label>
+              </div>
+              <div class="input-field col s6">
+                  <input placeholder="Номер паспорта клиента" id="userValpassportSerialNum" type="text" class="validate">
+                  <label for="userValpassportSerialNum">Номер паспорта</label>
+              </div>
+              <div class="input-field col s6">
+                  <input placeholder="Кем и когда выдан паспорт клиента" id="userValwhoGavePassport" type="text" class="validate">
+                  <label for="userValwhoGavePassport">Кем  и когда выдан паспорт</label>
+              </div>
+              <div class="input-field col s6">
+                  <input placeholder="Адрес регистрации клиента" id="userValregistrationAddress" type="text" class="validate">
+                  <label for="userValregistrationAddress">Адрес регистрации</label>
+              </div>
+              <div class="input-field col s6">
+                  <input placeholder="Адрес проживания клиента" id="userValhomeAddress" type="text" class="validate">
+                  <label for="userValhomeAddress">Адрес проживания</label>
+              </div>
+              <div class="input-field col s6">
+                  <input name="INN" ng-model="inn" placeholder="ИНН клиента" id="userValINN" type="text" class="validate" pattern="[1-9][0-9]{9}">
+                  <label for="userValINN" >ИНН клиента</label>
+              </div>
+              <div class="input-field col s6">
+                <label id="innOriginalNameLabel">Точное название ИНН</label>
+                  <select  id="innOriginalName">
+                    <option value="" disabled selected>Выберите точное название ИНН</option>
+                    <option value="ИНН">ИНН</option>
+                    <option value="ИНН2">ИНН2</option>
+                    <option value="ИНН3">ИНН3</option>
+                  </select>
+              </div>
+
+              <div class="col s12">
+                  <a ng-click="addNewClientAndSave()" id="addBtn" ng-hide="addClientForm.INN.$error.pattern" class="waves-effect blue darken-2 btn">Добавить</a>
+              </div>
+            </form>
         </div>
     </div>
     <div id="selectClientModalPart" class="modal-content">

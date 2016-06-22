@@ -1,5 +1,31 @@
 'use strict'
+var dateToday = new Date();
+function addZeros(n, needLength) {
+  needLength = needLength || 2;
+  n = String(n);
+  while (n.length < needLength) {
+    n = "0" + n;
+  }
+  return n
+}
+var sqlDateNow = dateToday.getFullYear()+'-'+addZeros( (dateToday.getMonth() + 1) )+'-'+addZeros( dateToday.getDate() );
+/*18.06.2016*/
 
+function revDate(s)
+
+{ var n=s.length-1
+
+var h;
+
+var s1='';
+
+for (var i=0; i <=n; i++)
+
+{ s1+=s.charAt(n-i) }
+
+return s1;
+
+}
 var mainApp = angular.module('mainApp', [])
 .factory('FlatsFactory', ['$rootScope', '$http', function($rootScope, $http) {
   var flatObj = {};
@@ -19,9 +45,9 @@ var mainApp = angular.module('mainApp', [])
   ];
  // flatObj.typeUserAccept =function(){
  //   var typeNumber = +getUserInfo().type.slice(-2,-1);
- //   //debugger;
+ //
  //    return showFlats(typeNumber);
- // } 
+ // }
  // function showFlats(typeAcceptNumber){
  //  switch(typeAcceptNumber){
  //    case 1:
@@ -31,7 +57,7 @@ var mainApp = angular.module('mainApp', [])
  //    case 7:
  //      return true;
  //    case 3:
- //      return false;  
+ //      return false;
  //    default:
  //     return false;
  //  }
@@ -46,7 +72,7 @@ var mainApp = angular.module('mainApp', [])
 
 
  flatObj.setSelectedFlat = function(selectedFlat) {
-    //debugger;
+
     this.selectedFlat = selectedFlat;
     this.selectedFlat.minPaymentSumm = getMinPaymentSumm(selectedFlat);
     this.selectedFlat.manager = getUserInfo();
@@ -55,7 +81,7 @@ var mainApp = angular.module('mainApp', [])
 
   function getMinPaymentSumm(selFlat) {
     if (selFlat && selFlat.f6 && selFlat.f6[0] && selFlat.f6[0].f1 == 1 && selFlat.f6[0].f2 == "Петровская") {
-      //debugger;
+
       // var totalSumm;
       // if(selFlat.creditMonts === 6){
       //   totalSumm = summRound(selFlat.totalSumm*1.03);
@@ -110,7 +136,7 @@ var mainApp = angular.module('mainApp', [])
 
   flatObj.getStock = function(callback, flatType, section, house) {
     var stocks = [];
-    $http.get('/api/data/table?t=383') 
+    $http.get('/api/data/table?t=383')
     .success(function(data){
       for(var i = 0, l = data.length; i < l; i++) {
         if (flatObj.toMySqlFormat(data[i].f4) && flatObj.toMySqlFormat(data[i].f5)) {
@@ -127,7 +153,7 @@ var mainApp = angular.module('mainApp', [])
             } else if(data[i].f7.toLowerCase() == flatType.toLowerCase()) {
               stocks.push(data[i]);
             }
-            
+
           }
         }
       }
@@ -143,7 +169,7 @@ var mainApp = angular.module('mainApp', [])
     .success(function(data){
       for(var i = data.length - 1; i >= 0; i--) {
         data[i].finalDate = checkFinalDate(data[i]);
-        data[i].totalSumm = summRound(data[i].price * data[i].square);
+         data[i].totalSumm = summRound(data[i].price * data[i].square);
         data[i].historyList = data[i].f8;
         data[i].paymentList = data[i].f9;
         data[i].NewClass = flatObj.getFlatClass(data[i]);
@@ -250,6 +276,9 @@ var mainApp = angular.module('mainApp', [])
         'f8': ' ',
         'f9': ' ',
         'f13': 1,
+        'f15': ' ',
+        'f14': ' ',
+        'f16': ' '
         //'f10': summRound(parseFloat(flat.square) - 5.1)
         // 'f5' : "Офис"
       }
@@ -297,10 +326,10 @@ var mainApp = angular.module('mainApp', [])
     function getClientById(clientId){
     	var f = new FormData();
     	f.append('r',clientId);
-    	var clientFIO 
+    	var clientFIO
     	ajaxPost('/api/data/tableRows',f,false,function(data){
     		clientFIO = JSON.parse(data)
-    		
+
     	});
     	return clientFIO[0].name;
     }
@@ -319,10 +348,10 @@ var mainApp = angular.module('mainApp', [])
     function fillGenericFlatFields(formData, flat, type) {
       formData.append('snippet', getSnippetId(flat, type));
       formData.append('data[testImg]', getFloorImg(flat.floor, flat.section) || "");
-      formData.append('data[contractNumber]', getContractNumber(getUserInfo(), $rootScope.selectedFlat.section, $rootScope.selectedFlat.number));
+      formData.append('data[contractNumber]', getContractNumber(getUserInfo(), $rootScope.selectedFlat.section, $rootScope.selectedFlat.f1));
       formData.append('data[section]', flat.section);
-      formData.append('data[flatNum]', flat.number);
-      var flatNumCursive = getTextNumber(flat.number);
+      formData.append('data[flatNum]', flat.f1);
+      var flatNumCursive = getTextNumber(flat.f1);
       formData.append('data[flatNumCursive]', flatNumCursive || "");
       formData.append('data[flatHouse]', flat.f6[0].f1);
       var flatHouseCursive = getTextNumber(flat.f6[0].f1);
@@ -344,7 +373,8 @@ var mainApp = angular.module('mainApp', [])
       formData.append('data[brickType]', brickType);
     }
     function getFloorImg(floorNumber, section) {
-      var returnedVal = "<img style=\"width: 500px; height: auto; text-align: center; display:block; margin: 0 auto;\" src=\"http://sales.barcelona.ovobox.com/files/imgPdf/Floors/";
+    	debugger;
+      var returnedVal = "<img style=\"width: 500px; height: auto; text-align: center; display:block; margin: 0 auto;\" src=\"http://sales.barcelona.co.ua/files/imgPdf/Floors/";
       switch (floorNumber) {
         case "0":
         switch (section) {
@@ -391,6 +421,7 @@ var mainApp = angular.module('mainApp', [])
         case "1":
         switch (section) {
           case "A1":
+          case "А1":
           returnedVal += "Floor1/А1_1_этаж.jpg\"/>";
           break;
           case "A2":
@@ -400,6 +431,7 @@ var mainApp = angular.module('mainApp', [])
           returnedVal = "";
           break;
           case "A4":
+          case "А4":
           returnedVal += "Floor1/А4_1_этаж.jpg\"/>";
           break;
           case "Б1":
@@ -433,15 +465,19 @@ var mainApp = angular.module('mainApp', [])
         case "2":
         switch (section) {
           case "A1":
+          case "А1":
           returnedVal += "Floor2/А1_2_этаж_цвет.jpg\"/>";
           break;
           case "A2":
+          case "А2":
           returnedVal += "Floor2/А2_2_этаж_цветное.jpg\"/>";
           break;
           case "A3":
+          case "А3":
           returnedVal += "Floor2/А3_2_этаж.jpg\"/>";
           break;
           case "A4":
+          case "А4":
           returnedVal += "Floor2/А4_2_этаж.jpg\"/>";
           break;
           case "Б1":
@@ -475,15 +511,19 @@ var mainApp = angular.module('mainApp', [])
         case "3":
         switch (section) {
           case "A1":
+          case "А1":
           returnedVal += "Floor3/А1_3_этаж_цвет.jpg\"/>";
           break;
           case "A2":
+          case "А2":
           returnedVal += "Floor3/А2_3_этаж_цветное.jpg\"/>";
           break;
           case "A3":
+          case "А3":
           returnedVal += "Floor3/А3_3_этаж.jpg\"/>";
           break;
           case "A4":
+          case "А4":
           returnedVal += "Floor3/А4_3_этаж.jpg\"/>";
           break;
           case "Б1":
@@ -517,15 +557,20 @@ var mainApp = angular.module('mainApp', [])
         case "4":
         switch (section) {
           case "A1":
+          case "А1":
           returnedVal += "Floor4/А1_4_этаж_цвет.jpg\"/>";
           break;
           case "A2":
+          case "А2":
           returnedVal += "Floor4/А2_4_этаж_цветное.jpg\"/>";
           break;
           case "A3":
+          case "А3":
+
           returnedVal += "Floor4/А3_4_этаж.jpg\"/>";
           break;
           case "A4":
+          case "А4":
           returnedVal += "Floor4/А4_4_этаж.jpg\"/>";
           break;
           case "Б1":
@@ -559,15 +604,19 @@ var mainApp = angular.module('mainApp', [])
         case "5":
         switch (section) {
           case "A1":
+          case "А1":
           returnedVal += "Floor5/А1_5_этаж_цвет.jpg\"/>";
           break;
           case "A2":
+          case "А2":
           returnedVal += "Floor5/А2_5_этаж_цветное.jpg\"/>";
           break;
           case "A3":
+          case "А3":
           returnedVal += "Floor5/А3_5_этаж.jpg\"/>";
           break;
           case "A4":
+          case "А4":
           returnedVal += "Floor5/А4_5_этаж.jpg\"/>";
           break;
           case "Б1":
@@ -601,15 +650,19 @@ var mainApp = angular.module('mainApp', [])
         case "6":
         switch (section) {
           case "A1":
+          case "А1":
           returnedVal += "Floor6/А1_6_этаж_цвет.jpg\"/>";
           break;
           case "A2":
+          case "А2":
           returnedVal += "Floor6/А2_6_этаж_цветное.jpg\"/>";
           break;
           case "A3":
+          case "А3":
           returnedVal += "Floor6/А3_6_этаж.jpg\"/>";
           break;
           case "A4":
+          case "А4":
           returnedVal += "Floor6/А4_6_этаж.jpg\"/>";
           break;
           case "Б1":
@@ -643,15 +696,19 @@ var mainApp = angular.module('mainApp', [])
         case "7":
         switch (section) {
           case "A1":
+          case "А1":
           returnedVal = "";
           break;
           case "A2":
+          case "А2":
           returnedVal = "";
           break;
           case "A3":
+          case "А3":
           returnedVal = "";
           break;
           case "A4":
+          case "А4":
           returnedVal = "";
           break;
           case "Б1":
@@ -686,7 +743,8 @@ var mainApp = angular.module('mainApp', [])
         returnedVal = "";
         break;
       }
-      console.log(floorNumber, "floorNumber");
+      //console.log(floorNumber, "floorNumber");
+      //console.log(returnedVal, "img");
       return returnedVal;
     }
     function getSnippetId(flat, type) {
@@ -788,7 +846,7 @@ flatObj.getContract = function(type) {
   now = new Date();
 
   var formData = new FormData();
-    //debugger;
+
     var flat = flatObj.getSelectedFlat();
     fillGenericFlatFields(formData, flat, type);
     //HouseData
@@ -828,7 +886,8 @@ flatObj.getContract = function(type) {
       }
 
       formData.append('data[clientOneINN]', clientOne.INN || "");
-      //debugger;
+      formData.append('data[clientOneINNOriginalName]', clientOne.f13 || "");
+
       //new functonality start:
       if ($rootScope.newMeterSquarePriseWithStockAndDickountReg) {
         flat.price = $rootScope.newMeterSquarePriseWithStockAndDickountReg;
@@ -884,7 +943,7 @@ flatObj.getContract = function(type) {
       formData.append('data[flatSummUsdForMeterCursiveСent]', getKopFromSumm(summRound(flat.price / dollar)));
 
         //credit
-        //debugger;
+
         var priceForMeterCredit = summRound(parseFloat(flat.price) * flat.coef);
         formData.append('data[flatSummGrnForMeterCredit]', priceForMeterCredit.toFixed(2));
         var flatSummGrnForMeterCreditCursive = getGrnAndCois(priceForMeterCredit);
@@ -950,7 +1009,7 @@ flatObj.getContract = function(type) {
           // Deposit
           if (type == "Внесен задаток") {
             // entranceSummGrn
-            //debugger;
+
             formData.append('data[entranceSummGrn]', summRound(flat.depositPerFlatSumm).toFixed(2));
             formData.append('data[clientOnePaymentSumm]', summRound(flat.depositPerFlatSumm).toFixed(2));
             var entranceSumm = getGrnAndCois(summRound(flat.depositPerFlatSumm));
@@ -1050,6 +1109,7 @@ flatObj.getContract = function(type) {
             formData.append('data[clientTwoAddressResBot]', "фактична адреса проживання:");
           }
           formData.append('data[clientTwoINN]', clientTwo.INN || "");
+          formData.append('data[clientTwoINNOriginalName]', clientTwo.f13 || "");
 
           formData.append('data[clientTwoPhone]', clientTwo.phone || " ");
           formData.append('data[clientTwoMail]', clientTwo.email || " ");
@@ -1122,7 +1182,7 @@ flatObj.getContract = function(type) {
           creditResidueTotalSummUsd = 0;
 
           for (var i = 0; i < creditPlanArrayLength; i++) {
-            //debugger;
+
             var monthNumber = flat.creditPlanArray[i].date.split("-")[1];
             if(monthNumber.indexOf('0') == 0){
               +monthNumber.replace('0','');
@@ -1141,7 +1201,7 @@ flatObj.getContract = function(type) {
         }
         // formData.append('data[flatSummUsd]', clientOne.homeAddress || " ");
       }
-      //debugger;
+
       var res = 'contract';
 
       var deposit = flatObj.checkIfFlatHasDeposit(flat);
@@ -1161,7 +1221,7 @@ flatObj.getContract = function(type) {
           var clientOneSummMinusDepositPdv = getGrnAndCois(summRound((flat.totalSumm-depositSummGrn) / 6));
           formData.append('data[clientOneSummMinusDepositPdv]', summRound((flat.totalSumm-depositSummGrn) / 6).toFixed(2));
           formData.append('data[clientOneSummMinusDepositPdvCursiveGrn]', clientOneSummMinusDepositPdv.bills);
-          formData.append('data[clientOneSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm-depositSummGrn) / 6))); 
+          formData.append('data[clientOneSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm-depositSummGrn) / 6)));
           if (flat.firstMinPaymentSumm > 1) {
             // set length for planning operation list its depends for clients array
             // if (flat.creditPlanArray && flat.creditPlanArray.length > 0) {
@@ -1210,7 +1270,7 @@ flatObj.getContract = function(type) {
           var clientTwoSummMinusDepositPdv = getGrnAndCois(summRound((flat.totalSumm/2) / 6));
           formData.append('data[clientTwoSummMinusDepositPdv]', summRound((flat.totalSumm/2) / 6).toFixed(2));
           formData.append('data[clientTwoSummMinusDepositPdvCursiveGrn]', clientTwoSummMinusDepositPdv.bills);
-          formData.append('data[clientTwoSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm/2) / 6))); 
+          formData.append('data[clientTwoSummMinusDepositPdvCursiveKop]', getKopFromSumm(summRound((flat.totalSumm/2) / 6)));
           //рассрочка на 2 клиента + задаток
           if (flat.firstMinPaymentSumm > 1) {
             // set length for planning operation list its depends for clients array
@@ -1269,17 +1329,17 @@ flatObj.getContract = function(type) {
         $.ajax({
           url:'/api/data/tableRows?r='+deposit.f9.replace(/[|,]/g, ""),
           method:'GET',
-          async:false          
+          async:false
         }).success(function(data) {
-          //debugger;
+
           var depositDataFromBank = JSON.parse(data);
           var depositDataFromBankNumber = depositDataFromBank[0].f1;
           var depositDataFromBankDate = depositDataFromBank[0].f2.split('-');
             // numOrdering
             formData.append('data[numOrdering]', depositDataFromBankNumber);
-            formData.append('data[numOrderingDate]', depositDataFromBankDate[2]);  
-            formData.append('data[numOrderingMonth]', depositDataFromBankDate[1]);  
-            formData.append('data[numOrderingYear]', depositDataFromBankDate[0]);    
+            formData.append('data[numOrderingDate]', depositDataFromBankDate[2]);
+            formData.append('data[numOrderingMonth]', depositDataFromBankDate[1]);
+            formData.append('data[numOrderingYear]', depositDataFromBankDate[0]);
             console.log(data,"data1");
 
             ajaxPost('/api/other/pdf_from_snippet', formData, false, function(data) {
@@ -1297,8 +1357,8 @@ flatObj.getContract = function(type) {
           console.log(data, "dataaaa");
         });
       }
-      //debugger;
-      
+
+
       if (type == "Продано" || type == "Внесен задаток" || type == "Рассрочка") {
         console.log(flatObj.getSelectedFlat(),'type');
 
@@ -1323,7 +1383,7 @@ flatObj.getContract = function(type) {
       var dollar = $rootScope.dollar;
 
       //TODO: Add dollar course
-      //debugger;
+
       if(type && summ >= 0 && date && getClientsIdFromSelectedClientsArrayInScope() != null) {
         var payer;
 		if(clientFIO){
@@ -1337,7 +1397,7 @@ flatObj.getContract = function(type) {
           'f3':   getUserInfo().field_value_id,
           'f21':  summ,
           'f7' :  $rootScope.selectedFlat.price,
-          'f8' :  getContractNumber(getUserInfo(), $rootScope.selectedFlat.section, $rootScope.selectedFlat.number),
+          'f8' :  getContractNumber(getUserInfo(), $rootScope.selectedFlat.section, $rootScope.selectedFlat.f1),
           'f4':   getClientsIdFromSelectedClientsArrayInScope(),
           'f5':   flatObj.getContract(type),
           'f6':   'Ожидаем',
@@ -1356,7 +1416,7 @@ flatObj.getContract = function(type) {
     //Work with planning operation table
     flatObj.addPlanningOperationToPlanningOparationTable = function(summ, date, clientId) {
       var newPlanningOperationId = null;
-      //debugger;
+
       var clientFIO = getClientById(clientId);
       if (date && summ > 0 && clientId) {
         var newPlanningOperationObj = {
@@ -1399,7 +1459,7 @@ flatObj.getContract = function(type) {
     $http.get('/api/data/tableRows?r=' + flatId)
     .success(function(flat) {
       if (flat) {
-        //debugger;
+
         //console.log($rootScope.creditMonth);
         var clientsForPlannedOperationView =$rootScope.selectedFlat.clientsArray
         $rootScope.selectedFlat = flat[0];
@@ -1421,6 +1481,7 @@ flatObj.getContract = function(type) {
       }
       $rootScope.selectedFlat.lastOperation = lastOperation;
       flatObj.setClientsByLastOperationToScope(lastOperation);
+
       $rootScope.selectedFlat.historyList = flat[0].f8;
       if(flat[0].f8 && flat[0].f8.length > 0) {
         $rootScope.selectedFlat.historyList.forEach(function(item) {
@@ -1446,7 +1507,7 @@ flatObj.getContract = function(type) {
         $rootScope.selectedFlat.manager = getUserInfo();
       }
       flatObj.setSelectedFlat($rootScope.selectedFlat);
-        //debugger;
+
         console.log($rootScope.selectedFlat);
         $http.get('/api/data/updateRow?r=' + $rootScope.selectedFlat.field_value_id+"&data[f14]="+getUserInfo().name).success();
       }
@@ -1504,10 +1565,20 @@ flatObj.getContract = function(type) {
       return returnedOperation;
     }
     flatObj.getFlatClass = function(sFlat) {
-      if(sFlat.f8 && sFlat.f8.length > 0) {
-        var lastOperation = sFlat.f8[sFlat.f8.length -1];
-        if(lastOperation.f1 === "Доплата по рассрочке") {
-          return "flat-is-surcharge-for-installment";
+        if (sFlat.f16){
+            /*18.06.2016*/
+
+            if(sqlDateNow > sFlat.f16) {
+
+                return "flat-is-overdue"
+            }
+        }
+
+
+        if(sFlat.f8 && sFlat.f8.length > 0) {
+            var lastOperation = sFlat.f8[sFlat.f8.length -1];
+            if(lastOperation.f1 === "Доплата по рассрочке") {
+              return "flat-is-surcharge-for-installment";
         } else if(lastOperation.f1 === "Забронировано") {
               // if(lastOperation.date && new Date(lastOperation.date) < new Date()) {
               //     return "flat-is-free";
@@ -1565,7 +1636,7 @@ flatObj.getContract = function(type) {
     $scope.priceTo = "";
     $scope.squareFrom = "";
     $scope.squareTo = "";
-    //debugger;
+
     //$rootScope.accept = FlatsFactory.typeUserAccept();
     $scope.listCtrlr = true;
     $scope.byPriceFrom = function(val) {
@@ -1612,51 +1683,50 @@ flatObj.getContract = function(type) {
             $scope.listCtrlr = false;
         }
     }
-  
-   
-   FlatsFactory.getFlats(function(flats) {  
+
+
+   FlatsFactory.getFlats(function(flats) {
       /*flat.f6[0].f2*/
       $rootScope.flats = flats;
       //do not delete
-      // flats.forEach(function(item) {
-        //   if(item) {
-        //     FlatsFactory.clearF8AndF9Fields(item);
-        //     console.log(true);
-        //     // if(item.f6[0].f2 == "Белогородская") {
-        //     //   var str = item.square;
-        //     //   item.square = str.replace(",",".");
-        //     //   var data = {
-        //     //     'f4': item.square
-        //     //   }
-        //     //
-        //     //   FlatsFactory.dataUpdate(item.field_value_id, data);
-        //     // }
-        //   }
-        // })
-    
-    
-    $scope.chessFlats = makeHouseArr('Петровская'); 
-    /*debugger;  */ 
-        
+	    // flats.forEach(function(item) {
+	    //     if(item) {
+	    //    	FlatsFactory.clearF8AndF9Fields(item);
+	    //    	console.log(true);
+	    //    		// if(item.f6[0].f2 == "Белогородская") {
+	    //    	// 	var str = item.square;
+	    //      	// 	item.square = str.replace(",",".");
+	    //     	// 	var data = {
+	    //      //   			'f4': item.square
+	    //       // 			};
+	    //  		// 	FlatsFactory.dataUpdate(item.field_value_id, data);
+	    //    		// }
+	    //     }
+	    // });
+
+
+    $scope.chessFlats = makeHouseArr('Петровская');
+
+
     });
-    
+
      $scope.changeHouse = function (house) {
        $scope.chessFlats = makeHouseArr(house);
      }
-     
-     function makeHouseArr(houseName) { 
+
+     function makeHouseArr(houseName) {
          var sortBySection = [];
-         
-         for (var fl in $rootScope.flats){ 
+
+         for (var fl in $rootScope.flats){
 
          if ($rootScope.flats[fl].f6) {
-          if(houseName === $rootScope.flats[fl].f6[0].f2) {  
-            sortBySection.push($rootScope.flats[fl]); 
+          if(houseName === $rootScope.flats[fl].f6[0].f2) {
+            sortBySection.push($rootScope.flats[fl]);
           }
          }
-          
+
         }
-         
+
         function compare(a, b) {
             if (a.section > b.section) return 1;
             if (a.section < b.section) return -1;
@@ -1670,7 +1740,7 @@ flatObj.getContract = function(type) {
        var sectionFromKey = sortedBeSection[0].section;
        var sortWithSection = [];
        sortWithSection[sectionKey] = [];
-       
+
        for (var thisFlat in sortedBeSection) {
            if (sectionFromKey !== sortedBeSection[thisFlat].section) {
              sectionKey++;
@@ -1681,37 +1751,37 @@ flatObj.getContract = function(type) {
        }
       var lastSort = []
        for (var thisSection in sortWithSection) {
-           
+
          var middleArray  = sortWithSection[thisSection].sort(compareFloor)
          var floorKey = 0;
          var firstFloor = middleArray[0].floor;
          var sortWithFloors = [];
          sortWithFloors[floorKey] = [];
-         
+
          for (var thatFlat in middleArray) {
              if (firstFloor !== middleArray[thatFlat].floor) {
              floorKey++;
              sortWithFloors[floorKey] = [];
-             firstFloor = middleArray[thatFlat].floor; 
+             firstFloor = middleArray[thatFlat].floor;
             }
             sortWithFloors[floorKey].push(middleArray[thatFlat]);
          }
-          
+
          lastSort.push( sortWithFloors );
-             
+
        }
-       
-       return lastSort;   
-        
+
+       return lastSort;
+
      }
-    
+
     $scope.openFlatModal = function(flat) {
       var lastOperation = FlatsFactory.getLastOperationByFlat(flat);
       $rootScope.selectedFlat = flat;
       $rootScope.selectedFlat.lastOperation = lastOperation;
       $rootScope.selectedFlat.clientsArray = [];
       FlatsFactory.setClientsByLastOperationToScope(lastOperation);
-      //debugger;
+
       $rootScope.unpayedDeposit = false;
       if($rootScope.selectedFlat.lastOperation && $rootScope.selectedFlat.lastOperation.f1 == "Внесен задаток" && $rootScope.selectedFlat.lastOperation.f6 =='Ожидаем'){
        $rootScope.unpayedDeposit = true;
@@ -1728,15 +1798,21 @@ flatObj.getContract = function(type) {
     console.log($rootScope.selectedFlat);
     $('#flatModal').openModal();
   }
-  $scope.checkFlatEditable = function(flat) {
+   $scope.checkFlatEditable = function(flat) {
     $http.get('/api/data/tableRows?r=' + flat.field_value_id)
     .success(function(data) {
-      if (parseInt(data[0].editable)) {
+         var userEditor = getUserInfo().name;
+         var flatManagerIs = data[0].f15 ? data[0].f15.replace(/\s+/g, '') : '';
+         var parseReady = parseInt(data[0].f13);
+    
+      if (parseReady || flatManagerIs === userEditor.replace(/\s+/g, '')) {
         $scope.openFlatModal(flat);
         var f = new FormData();
         f.append('r', flat.field_value_id);
         f.append('data[f13]', '0');
+        f.append('data[f15]', userEditor);
         ajaxPost('/api/data/updateRow',f, true, function(res) {});
+
       } else {
         $('#warningModal').openModal();
       }
@@ -1780,6 +1856,7 @@ flatObj.getContract = function(type) {
 
       //TODO: do this later
       $scope.updateClientData = function(clientId) {
+      	debugger;
         input = find('addUser').querySelectorAll('input');
         for (i = 0; i < input.length; i++) if (input[i].id !== "userValFilephoto" && input[i].value == '') return;
           if (clientId) {
@@ -1798,6 +1875,7 @@ flatObj.getContract = function(type) {
             f.append('data[f8]', find('userValregistrationAddress').value);
             f.append('data[f9]', find('userValhomeAddress').value);
             f.append('data[f10]', find('userValINN').value);
+            f.append('data[f13]', find('innOriginalName').value);
             ajaxPost('/api/data/updateRow',f, true, function(res) {
               if (res === "ok") {
                 Materialize.toast('Клиент изменен!', 2000);
@@ -1815,22 +1893,36 @@ flatObj.getContract = function(type) {
       }
       ])
 .controller('FlatCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory',
+
   function($scope, $rootScope, $http, FlatsFactory, ClientsFactory) {
+
     $scope.selectedFlat = FlatsFactory.getSelectedFlat();
 
     $scope.$on('setSelectedFlatChanged', function () {
       $scope.selectedFlat = FlatsFactory.getSelectedFlat();
     });
+
+    $(document).keydown(function(e) {
+    if( e.keyCode === 27 ) {
+        e.preventDefault();
+        $scope.setEditableTrue();
+    }
+
+});
+
     $scope.setEditableTrue = function() {
         // var id = document.querySelector('#saveFlatModal').getAttribute('data-flat-id');
         var id = $scope.selectedFlat.field_value_id;
         var f = new FormData();
         f.append('r', id);
         f.append('data[f13]', '1');
+        f.append('data[f15]', '');
         ajaxPost('/api/data/updateRow',f, true, function(res) {
           if(res == "ok") {
             FlatsFactory.getFlats(function(flats) {
               $scope.flats = flats;
+
+               location.reload(true);
               // $rootScope.flats.forEach(function(item) {
               //   item.NewClass = getFlatClass(item);
               // })
@@ -1912,6 +2004,7 @@ flatObj.getContract = function(type) {
       data.append('data[f8]', find('userValregistrationAddress').value);
       data.append('data[f9]', find('userValhomeAddress').value);
       data.append('data[f10]', find('userValINN').value);
+      data.append('data[f13]', find('innOriginalName').value)
       ajaxPost('/api/data/addNewRow', data, true, function(res) {
         if(parseInt(res)) {
           setClientToSelectedFlatScope(res);
@@ -1967,7 +2060,7 @@ flatObj.getContract = function(type) {
     //   $rootScope.ifCustomerPayedDeposit = true;
     // }
 
-    
+
       //Work with action BOOK
       $scope.bookFlat = function() {
         if($rootScope.selectedFlat) {
@@ -2086,6 +2179,7 @@ flatObj.getContract = function(type) {
         date = FlatsFactory.getDatapickerValueInMySqlFormat('depositPerFlatBlock', 'depositPerFlatDatepicker'),
         client = $scope.selectedFlat.clientsArray[0].field_value_id,
         newPlanningOperationId = FlatsFactory.addPlanningOperationToPlanningOparationTable(flatResidue, date, client);
+        $rootScope.toFlatDate = date;
         FlatsFactory.updateFlatPlanningOperationField(newPlanningOperationId, function(planningOperationFieldUpdateResult) {
           if(planningOperationFieldUpdateResult) {
             FlatsFactory.updateFlatOperationField(newOperationId, function(result) {
@@ -2093,8 +2187,10 @@ flatObj.getContract = function(type) {
                 console.log(result, "deposit per flat worked");
                 $rootScope.unpayedDeposit = true;
                 FlatsFactory.rewriteSelectedFlatAndImportantField($scope.selectedFlat.field_value_id);
+
                 Materialize.toast("Операция успешна. Вы забронировали квартиру!", 3000);
-                $http.get('/api/data/updateRow?r=' + $rootScope.selectedFlat.field_value_id+"&data[f14]="+getUserInfo().name).success(); 
+                $http.get('/api/data/updateRow?r=' + $rootScope.selectedFlat.field_value_id+"&data[f14]="+getUserInfo().name+'&data[f16]='+$rootScope.toFlatDate).success();
+
               }
             });
           } else {
@@ -2171,7 +2267,7 @@ flatObj.getContract = function(type) {
 .controller('SellFlatCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory',
   function($scope, $rootScope, $http, FlatsFactory, ClientsFactory) {
     $scope.selectedFlat = FlatsFactory.getSelectedFlat();
-    //debugger;
+
     $scope.selectedFlat.selectedDiscount = 0;
     $scope.selectedFlat.selectedStock = 0;
     $scope.selectedFlat.returnedSellSumm = 0;
@@ -2285,7 +2381,7 @@ flatObj.getContract = function(type) {
           }
         } else {
           Materialize.toast("Error, something wrong with cancel deposit per flat", 3000);
-        }
+        } 
         console.log("cancel sell flat");
       }
       function checkIfFlatHasDeposit(selectedFlat) {
@@ -2308,7 +2404,7 @@ flatObj.getContract = function(type) {
   ])
 .controller('CreditPerFlatCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory',
   function($scope, $rootScope, $http, FlatsFactory, ClientsFactory) {
-   //debugger;
+
    $scope.selectedFlat = FlatsFactory.getSelectedFlat();
    $scope.$on('setSelectedFlatChanged', function () {
     $scope.selectedFlat = FlatsFactory.getSelectedFlat();
@@ -2322,18 +2418,18 @@ flatObj.getContract = function(type) {
    var deposit = checkIfFlatHasDeposit($scope.selectedFlat);
    // $scope.avans = $scope.selectedFlat.minPaymentSumm;
    $scope.$watch('selectedFlat.creditMonth', function(value){
-      //debugger;
+
       if(+value == 6) {
         $scope.selectedFlat.minPaymentSummOutput =summRound($scope.selectedFlat.minPaymentSumm*1.03).toFixed(2);
-        $scope.selectedFlat.totalSummFlat = summRound($scope.selectedFlat.totalSumm*1.03); 
+        $scope.selectedFlat.totalSummFlat = summRound($scope.selectedFlat.totalSumm*1.03);
         $scope.selectedFlat.coef = 1.03;
       }
       if(+value == 12){
         $scope.selectedFlat.minPaymentSummOutput =summRound($scope.selectedFlat.minPaymentSumm*1.06).toFixed(2);
-        $scope.selectedFlat.totalSummFlat = summRound($scope.selectedFlat.totalSumm*1.06); 
-        $scope.selectedFlat.coef = 1.06; 
+        $scope.selectedFlat.totalSummFlat = summRound($scope.selectedFlat.totalSumm*1.06);
+        $scope.selectedFlat.coef = 1.06;
       }
-      
+
       $rootScope.creditMonth = value;
       countPlanningOperations();
     }, true);
@@ -2348,10 +2444,10 @@ flatObj.getContract = function(type) {
     return month < 10 ? '0' + month : month;
   }
       function countPlanningOperations() { // без задатка
-        //debugger;
+
         $scope.selectedFlat.creditPlanArray = [];
         var m2 = summRound(summRound(summRound($scope.selectedFlat.square * $scope.selectedFlat.price) * $scope.selectedFlat.coef) / $scope.selectedFlat.square);
-        
+
         var totalSumm = summRound($scope.selectedFlat.totalSummFlat - $scope.selectedFlat.firstMinPaymentSumm);
         var residueM2 = summRound(totalSumm / m2);
         var resultSumm = summRound(residueM2 * m2);
@@ -2420,7 +2516,7 @@ flatObj.getContract = function(type) {
 
       //TODO: рассрочка работает только для одного человека без  учета задатка доделать
       $scope.creditFlat = function() {
-        //debugger;
+
         var newPlanningOperationId = "|";
         if ($scope.selectedFlat.creditPlanArray && $scope.selectedFlat.creditPlanArray.length > 0) {
           if ($scope.selectedFlat.clientsArray && $scope.selectedFlat.clientsArray.length == 1) {
@@ -2654,21 +2750,23 @@ function getTextNumber(dig) {
     }
     return result;
   }
-  var finalResult = ''
+  var finalResult = '';
   for(var i = 9 ; i > -1; i-=3){
     finalResult += dim(dig, i, words) + ' ';
+
   }
-  return finalResult.replace(/[\s]{2,}/ig,' ').trim();
+  var oneMilionCntrl = finalResult.replace(/[\s]{2,}/ig,' ').trim();
+  return oneMilionCntrl.replace('одна мільйон','один мільйон');
 }
 
 function summRound(summ) {
 
   return Math.round(summ * 100)  / 100;
-  
+
 }
 function getKopFromSumm(price){
   var summ = ''+price,
-  splitedSumm;  
+  splitedSumm;
   if(isNaN(parseFloat(summ))) {
     return 'нет данных';
   }else{
@@ -2695,7 +2793,7 @@ function getKopFromSumm(price){
           default:
           return '00';
         }
-      } 
+      }
     }
   }
 }

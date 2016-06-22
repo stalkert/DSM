@@ -23,7 +23,7 @@
 }
 
 .flat-filter {
-    padding: 0 20px;
+    padding: 30px 20px 10px 20px; 
 }
 
 .flat-filter .input-field  {
@@ -141,6 +141,10 @@ div {
 #list .flat-is-booked, .flat-is-booked {
     background: #008B00;
 }
+
+#list .flat-is-overdue, .flat-is-overdue {
+    background: #FF00EA; 
+}
 #list .flat-is-surcharge-for-installment, .flat-is-surcharge-for-installment {
     background: #B2FFBB;
 }
@@ -234,6 +238,7 @@ div {
 .sidebar-menu-flats {
     display: inline-block;
     vertical-align: top;
+    width: 200px !important; 
     /*padding-right: 20px;*/
 }
 
@@ -352,6 +357,7 @@ footer.page-footer.blue.darken-2{
 .section-wrap {
  float: left;
  width: 350px;
+ margin-left: 3px; 
 }
 
 .chess-table {
@@ -388,6 +394,12 @@ footer.page-footer.blue.darken-2{
     cursor: pointer; 
     color: #686868;
     margin: 5px 0;
-    width: 228px;
+    width: 200px;
     border-bottom: 1px solid silver;
+}
+
+.leftBarChess:hover {
+    padding-left: 3px;
+    padding-bottom:1px;
+    background-color:#B2DFDB;
 }
