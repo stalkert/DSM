@@ -28,6 +28,7 @@ return s1;
 }
 var mainApp = angular.module('mainApp', [])
 .factory('FlatsFactory', ['$rootScope', '$http', function($rootScope, $http) {
+$rootScope.newLastNumberTest = true;
   var flatObj = {};
   var month = [
   'січня',
@@ -217,7 +218,28 @@ var mainApp = angular.module('mainApp', [])
       });
     return res;
   }
-
+  flatObj.flatsAdd = function(flat,house,price) {
+   var data = new FormData();
+      data.append('t', '273');
+      data.append('data[f1]', flat.number);
+      data.append('data[f2]', flat.floor);
+      data.append('data[f5]', flat.rooms);
+      data.append('data[f3]', 1);
+      data.append('data[f12]', flat.section);
+      data.append('data[f11]', flat.type);
+      data.append('data[f4]', flat.square);
+      data.append('data[f10]', flat.squarelive);
+      data.append('data[f21]', price);
+      data.append('data[f6]', house);
+      data.append('data[f13]', 1);
+      data.append('data[f16]', null);
+      data.append('data[f8]', null);
+      data.append('data[f14]', '');
+      
+      ajaxPost('/api/data/addNewRow', data, false,function(){
+        console.log('Добавлена квартира №',data.number);
+      });
+  }
   flatObj.dataUpdate = function(id, data) {
     var res = false,
     dataA = new FormData();
@@ -367,13 +389,19 @@ var mainApp = angular.module('mainApp', [])
       formData.append('data[currentYear]', getTrueMonth(new Date().getFullYear()));
       formData.append('data[currentDMY]', ( getTrueDate(new Date().getDate()) + "." + getTrueMonth(new Date().getMonth() + 1) + "." + new Date().getFullYear()));
       var brickType = "цегла керамічна М100, гіпсова штукатурка";
+      var floorType ="цементно-піщана стяжка"
+      if(flat.floor == 1){
+      	brickType = "цегла керамічна М100";
+      	floorType ="цементно-піщана стяжка відсутня";
+      }
       if(flat.floor > 4) {
         brickType = "газоблок стіновий";
       }
       formData.append('data[brickType]', brickType);
+      formData.append('data[floorType]', floorType);
     }
     function getFloorImg(floorNumber, section) {
-    	debugger;
+    	
       var returnedVal = "<img style=\"width: 500px; height: auto; text-align: center; display:block; margin: 0 auto;\" src=\"http://sales.barcelona.co.ua/files/imgPdf/Floors/";
       switch (floorNumber) {
         case "0":
@@ -835,10 +863,25 @@ return id;
 }
 function getContractNumber(manager, section, number) {
   var result = "";
+  var ReturnedResult = '';
   manager.name.split(" ").forEach(function(item) {
-    result += item.charAt(0);
+    result += item.charAt( 0 );
   });
-  return result + "/" + section + "/" + number;
+var request = new XMLHttpRequest();
+request.open('GET', '/api/data/table?t=422&where[field_value_id]=103550', false);  // `false` makes the request synchronous
+request.send(null);
+
+if (request.status === 200) {
+        var dataLast = JSON.parse(request.responseText);
+        ReturnedResult = dataLast[0].f1 + '-' + result + "/" + section + "/" + number;  
+        if ($rootScope.newLastNumberTest) {
+        $rootScope.newLastNumber = dataLast[0].f1*1+1; 
+        request.open('GET', '/api/data/updateRow?r=103550&data[f1]='+$rootScope.newLastNumber, true);
+        request.send(null);
+        $rootScope.newLastNumberTest = false;
+        }  
+        return ReturnedResult;  
+    }
 }
 flatObj.getContract = function(type) {
   var dataObj = {},
@@ -860,6 +903,7 @@ flatObj.getContract = function(type) {
       var declarationNumberAndDate = flat.f6[0].f9;
       var constructionEnd = flat.f6[0].f10;
       var commissioning = flat.f6[0].f11;
+      var sectionOneEndTwoOfContract =flat.f6[0].f12;
       formData.append('data[kadastrNumber]', kadastrNumber);
       formData.append('data[certificateNumber]', certificateNumber);
       formData.append('data[gosReestrNumber]', gosReestrNumber);
@@ -869,6 +913,7 @@ flatObj.getContract = function(type) {
       formData.append('data[declarationNumberAndDate]', declarationNumberAndDate);
       formData.append('data[constructionEnd]', constructionEnd);
       formData.append('data[commissioning]', commissioning);
+      formData.append('data[sectionOneEndTwoOfContract]', sectionOneEndTwoOfContract);
     }
     if (flat.clientsArray) {
       var clientOne = flat.clientsArray[0];
@@ -1543,7 +1588,7 @@ flatObj.getContract = function(type) {
         selectedFlat.f8.forEach(function(operation) {
           if (operation.f1 == "Внесен задаток") {
             if (selectedFlat.clientsArray.length == 1) {
-              if (operation.f4.match(/\d+/g)[0] == selectedFlat.clientsArray[0].field_value_id) {
+              if (operation.f4 && operation.f4.match(/\d+/g)[0] == selectedFlat.clientsArray[0].field_value_id) {
                 returnedOperation = operation;
               } else {
                 returnedOperation = null;
@@ -1631,6 +1676,37 @@ flatObj.getContract = function(type) {
 }])
 .controller('FlatsCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory',
   function($scope, $rootScope, $http, FlatsFactory, ClientsFactory) {
+ 
+//do not delete;
+// $http.get('/api/data/table?t=273')
+//     .success(function(data){
+//       var flats =data;
+//       var flatsLength = data.length;
+//       var petrovskogo1Length = petrovskogo1.length
+//     first:  for(var i = 0; i < flatsLength; i++ ){
+//     second:  	for(var j = 0; j < petrovskogo1Length; j++ ){
+//       			//debugger;
+//         			if(flats[i] && flats[i].f1 == petrovskogo1[j].number){
+//           				if(flats[i].floor == petrovskogo1[j].floor && flats[i].room == petrovskogo1[j].rooms && flats[i].section== petrovskogo1[j].section && flats[i].square == petrovskogo1[j].square && flats[i].liveSquare == petrovskogo1[j].squarelive){
+//             				console.log('Квартира ',flats[i].f1,' в секции ',flats[i].section,'  - корректна.');
+//             				continue first;
+//           				}else{
+//             				console.log('Квартира ',flats[i].f1,' в секции ',flats[i].section,'  - не корректна.');
+//             				continue first;
+//          				 }
+//         			}
+
+//         		}
+//         		console.log('Квартира ',flats[i].f1,' в секции ',flats[i].section,'  - не совпала.');
+//       		}
+//     });
+//do not delete;
+// flatsToTable.forEach(function(flat){
+//   FlatsFactory.flatsAdd(flat);
+// });
+
+
+
     $scope.bookDate = "";
     $scope.priceFrom = "";
     $scope.priceTo = "";
@@ -1640,28 +1716,47 @@ flatObj.getContract = function(type) {
     //$rootScope.accept = FlatsFactory.typeUserAccept();
     $scope.listCtrlr = true;
     $scope.byPriceFrom = function(val) {
-      if (parseFloat(val.price) >= $scope.priceFrom || $scope.priceFrom == 0) {
+      if (parseFloat(val.price*1) >= $scope.priceFrom || !$scope.priceFrom ) {
         return true;
       } else {
         return false;
       }
     }
+    
     $scope.byPriceTo = function(val) {
-      if (parseFloat(val.price) <= $scope.priceTo || $scope.priceTo == 0) {
-        return true;
+      if (parseFloat(val.price*1) <= $scope.priceTo || !$scope.priceTo ) {
+        return true; 
       } else {
         return false;
       }
     }
+    
     $scope.bySquareFrom = function(val) {
-      if (parseFloat(val.square) >= $scope.squareFrom || $scope.squareFrom == 0) {
+      if (parseFloat(val.square*1) >= $scope.squareFrom || !$scope.squareFrom ) {
         return true;
       } else {
         return false;
       }
     }
+    
     $scope.bySquareTo = function(val) {
-      if (parseFloat(val.square) <= $scope.priceFrom || $scope.squareTo == 0) {
+      if (parseFloat(val.square*1) <= $scope.squareTo || !$scope.squareTo ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    
+    $scope.byFilterFloors = function(val) {
+      if (parseFloat(val.floor*1) == $scope.filterFloors || !$scope.filterFloors ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    
+    $scope.byFilterRooms = function(val) {
+      if (parseFloat(val.room*1) == $scope.filterRooms || !$scope.filterRooms ) {
         return true;
       } else {
         return false;

@@ -15,17 +15,17 @@
           <!--<div class="collapsible-header"><i class="material-icons">account_balance</i>Квартиры</div>-->
           <!--<div class="collapsible-body">-->
           <div class="input-field col m4 s12">
-            <select multiple id="rooms" onchange="setFilter('room', this.parentNode.querySelector('input').value)">
-              <option value="" disabled>Кол-во комнат</option>
+            <select  id="rooms" ng-model="filterRooms">
+              <option value="" selected>Кол-во комнат</option>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
             </select>
           </div>
           <div class="input-field col m4 s12">
-            <select multiple id="floors" onchange="setFilter('floor', this.parentNode.querySelector('input').value)">
-              <option value="" disabled selected>Этаж</option>
-              <option value="0">0</option>
+            <select  id="floors" ng-model="filterFloors">
+              <option value=""  selected>Этаж</option>
+              
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -35,13 +35,13 @@
               <option value="7">7</option>
             </select>
           </div>
-          <div class="input-field col m4 s12">
+          <!--<div class="input-field col m4 s12">
             <select multiple id="levels" onchange="setFilter('level', this.parentNode.querySelector('input').value)">
               <option value="" disabled selected>Уровней</option>
               <option value="1">1</option>
               <option value="2">2</option>
             </select>
-          </div>
+          </div>-->
 
           <div class="input-field col m3 s6">
             <input id="price_from" ng-model="priceFrom" type="text" class="validate">
@@ -92,7 +92,8 @@
             </tr>
           </thead>
           <tbody id="flattable">
-            <tr ng-repeat="flat in flats | filter:byPriceFrom | filter:byPriceTo | filter:bySquareFrom | filter:bySquareTo"
+            <tr ng-repeat="flat in flats | filter:byPriceFrom | filter:byPriceTo | filter:bySquareFrom | filter:bySquareTo | filter:byFilterFloors
+| filter:byFilterRooms" 
               ng-click="checkFlatEditable(flat)" ng-class="flat.NewClass"  data-tooltip="{{flat.editManager || 'не обработано'}}">
               <td ng-bind="flat.f6[0].f2 + ', ' + flat.f6[0].f1"></td>
               <td ng-bind="flat.section" ></td>
