@@ -1408,19 +1408,20 @@ flatObj.getContract = function(type) {
             formData.append('data[numOrderingMonth]', depositDataFromBankDate[1]);
             formData.append('data[numOrderingYear]', depositDataFromBankDate[0]);
             console.log(data,"data1");
-
+            
             ajaxPost('/api/other/pdf_from_snippet', formData, false, function(data) {
               res = data;
-
+              
               console.log(data, "dataaaa");
             });
           });
 
 
       } else {
+        
         ajaxPost('/api/other/pdf_from_snippet', formData, false, function(data) {
           res = data;
-
+          
           console.log(data, "dataaaa");
         });
       }
@@ -2346,8 +2347,9 @@ flatObj.getContract = function(type) {
               var newOperationId = FlatsFactory.addOperationToOperationTable("Отмена задатка", $scope.selectedFlat.returnedSumm);
               FlatsFactory.updateFlatOperationField(newOperationId, function(updateOperationFieldInFlatTableStatus) {
                 if(updateOperationFieldInFlatTableStatus) {
-                  console.log(updateOperationFieldInFlatTableStatus, " cancel deposit per flat worked");
+                  //console.log(updateOperationFieldInFlatTableStatus, " cancel deposit per flat worked");
                   FlatsFactory.rewriteSelectedFlatAndImportantField($scope.selectedFlat.field_value_id);
+                   $rootScope.unpayedDeposit = false;
                   Materialize.toast("Операция успешна. Вы отменили задаток за квартиру!", 3000);
                 } else {
                   Materialize.toast("Ошибка, квартира не обновлена, сообщите администратору");
@@ -2519,9 +2521,11 @@ flatObj.getContract = function(type) {
     }
   }
   ])
-.controller('CreditPerFlatCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory',
-  function($scope, $rootScope, $http, FlatsFactory, ClientsFactory) {
-
+.controller('CreditPerFlatCtrl', ['$scope', '$rootScope', '$http', 'FlatsFactory', 'ClientsFactory','$timeout',
+  function($scope, $rootScope, $http, FlatsFactory, ClientsFactory,$timeout) {
+// $scope.showPreloader = function(){
+//       $rootScope.preloader = true;
+//     };
    $scope.selectedFlat = FlatsFactory.getSelectedFlat();
    $scope.$on('setSelectedFlatChanged', function () {
     $scope.selectedFlat = FlatsFactory.getSelectedFlat();
@@ -2632,7 +2636,8 @@ flatObj.getContract = function(type) {
 
       //TODO: рассрочка работает только для одного человека без  учета задатка доделать
       $scope.creditFlat = function() {
-
+        $rootScope.preloader = true;
+        $timeout(function(){
         var newPlanningOperationId = "|";
         if ($scope.selectedFlat.creditPlanArray && $scope.selectedFlat.creditPlanArray.length > 0) {
           if ($scope.selectedFlat.clientsArray && $scope.selectedFlat.clientsArray.length == 1) {
@@ -2649,6 +2654,7 @@ flatObj.getContract = function(type) {
                   $scope.selectedFlat.creditPlanArray[j].summ,
                   FlatsFactory.toMySqlFormat($scope.selectedFlat.creditPlanArray[j].date),
                   $scope.selectedFlat.clientsArray[i].field_value_id) + "|";
+                
               }
             }
           } else {
@@ -2662,13 +2668,17 @@ flatObj.getContract = function(type) {
               if (result) {
                 console.log(result, "credit per flat worked");
                 FlatsFactory.rewriteSelectedFlatAndImportantField($scope.selectedFlat.field_value_id);
+                
+                $rootScope.preloader = false;
                 Materialize.toast("Операция успешна. Вы взяли кредит на квартиру!", 3000);
               }
             });
           } else {
+            $rootScope.preloader = false;
             Materialize.toast("Can't update flat planning operation field", 3000);
           }
         });
+      },10);
       }
       $scope.cancelCreditFlat = function() {
         if($scope.selectedFlat && $scope.selectedFlat.lastOperation && $scope.selectedFlat.lastOperation.f1 == "Рассрочка") {
@@ -2971,3 +2981,9 @@ var timerId = setInterval(function() {
     toogleTooltip = false;
   }
 }, 3000);
+ // $(document).ready(function(){
+ //  $('.cssload-thecube').hide();
+ //      $('#click-preloader').on('click',function(){
+ //        $('.cssload-thecube').show();
+ //      });
+ //    });
