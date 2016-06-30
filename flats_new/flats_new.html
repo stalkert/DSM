@@ -62,10 +62,11 @@
           <!--</div>-->
           <!--</li>-->
         </div>
-        <div class="flat-filter active-filter" ng-show="viewMode == 'chess'">
+       <!-- <div class="flat-filter active-filter" ng-show="viewMode == 'chess'">
             <div ng-click="changeHouse('Петровская')" class='leftBarChess'>Петровская</div>
-            <div ng-click="changeHouse('Белогородская')" class='leftBarChess'>Белогородская</div> 
-        </div>
+            <div ng-click="changeHouse('Белогородская, 2')" class='leftBarChess'>Белогородская 2</div>
+            <div ng-click="changeHouse('Белогородская, 8,10')" class='leftBarChess'>Белогородская 8,10</div> 
+        </div>-->
         <li class="house-filter">
           <div class="collapsible-header"><i class="material-icons">location_city</i>Дом</div>
           <div class="collapsible-body" id="housesList">
@@ -471,9 +472,9 @@
               </div>
               <div class="input-field col s6">
                 <label id="innOriginalNameLabel">Точное название ИНН</label>
-                  <select  id="innOriginalName">
+                  <select  id="innOriginalName" class="material-myselect">
                     <option value="" disabled selected>Выберите точное название ИНН</option>
-                    <option value="ИНН">ИНН</option>
+                    <option value="ідентифікаційний номер">ідентифікаційний номер</option>
                     <option value="ИНН2">ИНН2</option>
                     <option value="ИНН3">ИНН3</option>
                   </select>

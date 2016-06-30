@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 var dateToday = new Date();
 function addZeros(n, needLength) {
   needLength = needLength || 2;
@@ -8,6 +8,16 @@ function addZeros(n, needLength) {
   }
   return n
 }
+
+      function makeInithials(name) {
+          var IFO = name.split(' ');
+          if(IFO[2]){
+          return IFO[1].charAt(0)+'.'+IFO[2].charAt(0)+'. '+IFO[0]; 
+      	}else{
+      		return IFO[1].charAt(0)+'.'+IFO[0]; 
+      	}
+      }
+       
 var sqlDateNow = dateToday.getFullYear()+'-'+addZeros( (dateToday.getMonth() + 1) )+'-'+addZeros( dateToday.getDate() );
 /*18.06.2016*/
 
@@ -73,7 +83,6 @@ $rootScope.newLastNumberTest = true;
 
 
  flatObj.setSelectedFlat = function(selectedFlat) {
-
     this.selectedFlat = selectedFlat;
     this.selectedFlat.minPaymentSumm = getMinPaymentSumm(selectedFlat);
     this.selectedFlat.manager = getUserInfo();
@@ -81,7 +90,7 @@ $rootScope.newLastNumberTest = true;
   }
 
   function getMinPaymentSumm(selFlat) {
-    if (selFlat && selFlat.f6 && selFlat.f6[0] && selFlat.f6[0].f1 == 1 && selFlat.f6[0].f2 == "Петровская") {
+    if (selFlat && selFlat.f6 && selFlat.f6[0] ) {
 
       // var totalSumm;
       // if(selFlat.creditMonts === 6){
@@ -96,7 +105,7 @@ $rootScope.newLastNumberTest = true;
       } else {
         return summRound(selFlat.totalSumm / 2);
       }
-    } else if(selFlat && selFlat.f6 && selFlat.f6[0] && selFlat.f6[0].f1 == 2 && selFlat.f6[0].f2 == "Белогородская") {
+    /*} else if(selFlat && selFlat.f6 && selFlat.f6[0] && selFlat.f6[0].f1 == 2) {
       if (selFlat.room == 1) {
         return summRound((selFlat.totalSumm / 100) * 70);
       } else {
@@ -104,9 +113,9 @@ $rootScope.newLastNumberTest = true;
       }
     } else {
       return 0;
-    }
+    }*/
   }
-
+}
   flatObj.getSelectedFlat = function() {
     return this.selectedFlat;
   }
@@ -377,6 +386,10 @@ $rootScope.newLastNumberTest = true;
       formData.append('data[flatNumCursive]', flatNumCursive || "");
       formData.append('data[flatHouse]', flat.f6[0].f1);
       var flatHouseCursive = getTextNumber(flat.f6[0].f1);
+      if (flatHouseCursive === 'одна')      flatHouseCursive = 'один';
+      if (flatHouseCursive === 'дві')      flatHouseCursive = 'два';
+      if (flat.f6[0].f1 == "8,10") 
+        flatHouseCursive = 'вісім, десять';
       formData.append('data[flatHouseCursive]', flatHouseCursive);
       var flatRoomsCursive = getTextNumber(flat.room);
       formData.append('data[flatRoomsCursive]', flatRoomsCursive);
@@ -509,7 +522,7 @@ $rootScope.newLastNumberTest = true;
           returnedVal += "Floor2/А4_2_этаж.jpg\"/>";
           break;
           case "Б1":
-          returnedVal += "Floor2/Б1_1_этаж_цвет.jpg\"/>";
+          returnedVal += "Floor2/Б1_2_этаж_цвет.jpg\"/>";
           break;
           case "Б2":
           returnedVal += "Floor2/Б2_2_этаж_цветное.jpg\"/>";
@@ -746,10 +759,10 @@ $rootScope.newLastNumberTest = true;
           returnedVal += "Floor7/Б2-7-этаж-цвет.jpg\"/>";
           break;
           case "Б3":
-          returnedVal += "Floor7/Б3_7_этаж.jpg\"/>";
+          returnedVal += "Floor7/Б3-7-этаж-цвет.jpg\"/>";
           break;
           case "Б4":
-          returnedVal += "Floor7/Б4_7_этаж.jpg\"/>";
+          returnedVal += "Floor7/Б4-7-этаж-цвет.jpg\"/>";
           break;
           case "В1":
           returnedVal = "";
@@ -884,6 +897,7 @@ if (request.status === 200) {
     }
 }
 flatObj.getContract = function(type) {
+    
   var dataObj = {},
   result,
   now = new Date();
@@ -914,10 +928,16 @@ flatObj.getContract = function(type) {
       formData.append('data[constructionEnd]', constructionEnd);
       formData.append('data[commissioning]', commissioning);
       formData.append('data[sectionOneEndTwoOfContract]', sectionOneEndTwoOfContract);
+      formData.append('data[PurposeOfPayment]', "авансовий  внесок"); 
+   
     }
     if (flat.clientsArray) {
       var clientOne = flat.clientsArray[0];
+
+      formData.append('data[clientOneInithials]', makeInithials(clientOne.name) || " "); 
+      
       formData.append('data[clientOne]', clientOne.name || " ");
+    
       formData.append('data[clientOnePassportSer]', clientOne.passportSerialKey || " ");
       formData.append('data[clientOnePassportNum]', clientOne.passportSerialNum || " ");
       formData.append('data[clientOnePassportIssued]', clientOne.whoGavePassport || " ");
@@ -1131,6 +1151,7 @@ flatObj.getContract = function(type) {
           formData.append('data[clientOneSummPdvCursiveKop]', getKopFromSumm(clientSummPdv));
 
           var clientTwoSumm = getGrnAndCois(clientSumm);
+     
           formData.append('data[clientTwoSumm]', clientSumm || " ");
           formData.append('data[clientTwoSummCursiveGrn]', clientTwoSumm.bills);
           formData.append('data[clientTwoSummCursiveKop]', getKopFromSumm(clientSumm));
@@ -1141,6 +1162,7 @@ flatObj.getContract = function(type) {
           formData.append('data[clientTwoSummPdvCursiveKop]', getKopFromSumm(clientSummPdv));
 
           var clientTwo = flat.clientsArray[1];
+          formData.append('data[clientTwoInithials]', makeInithials(clientTwo.name) || " "); 
           formData.append('data[clientTwo]', clientTwo.name || " ");
           formData.append('data[clientTwoPassportSer]', clientTwo.passportSerialKey || " ");
           formData.append('data[clientTwoPassportNum]', clientTwo.passportSerialNum || " ");
@@ -1800,13 +1822,13 @@ flatObj.getContract = function(type) {
 	    // });
 
 
-    $scope.chessFlats = makeHouseArr('Петровская');
+    $scope.chessFlats = makeHouseArr();
 
 
     });
 
-     $scope.changeHouse = function (house) {
-       $scope.chessFlats = makeHouseArr(house);
+     $scope.changeHouse = function () {
+       $scope.chessFlats = makeHouseArr();
      }
 
      function makeHouseArr(houseName) {
@@ -1815,9 +1837,9 @@ flatObj.getContract = function(type) {
          for (var fl in $rootScope.flats){
 
          if ($rootScope.flats[fl].f6) {
-          if(houseName === $rootScope.flats[fl].f6[0].f2) {
-            sortBySection.push($rootScope.flats[fl]);
-          }
+          
+            sortBySection.push($rootScope.flats[fl]); 
+        
          }
 
         }
@@ -2513,7 +2535,6 @@ flatObj.getContract = function(type) {
    var deposit = checkIfFlatHasDeposit($scope.selectedFlat);
    // $scope.avans = $scope.selectedFlat.minPaymentSumm;
    $scope.$watch('selectedFlat.creditMonth', function(value){
-
       if(+value == 6) {
         $scope.selectedFlat.minPaymentSummOutput =summRound($scope.selectedFlat.minPaymentSumm*1.03).toFixed(2);
         $scope.selectedFlat.totalSummFlat = summRound($scope.selectedFlat.totalSumm*1.03);

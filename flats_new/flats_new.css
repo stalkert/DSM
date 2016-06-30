@@ -139,14 +139,14 @@ div {
     width: auto !important;
 }
 #list .flat-is-booked, .flat-is-booked {
-    background: #008B00;
+    background: #4CAF50; 
 }
 
 #list .flat-is-overdue, .flat-is-overdue {
-    background: #FF00EA; 
+    background: #FF80AB; 
 }
 #list .flat-is-surcharge-for-installment, .flat-is-surcharge-for-installment {
-    background: #B2FFBB;
+    background: #69EFAD;
 }
 
 #list .flat-in-installments, .flat-in-installments {
@@ -161,7 +161,7 @@ div {
     background: #ffcdd2;
 }
 #list .flat-is-sold, .flat-is-sold {
-    background: #D22222;
+    background: #E57373;
 }
 
 #list {
@@ -402,4 +402,7 @@ footer.page-footer.blue.darken-2{
     padding-left: 3px;
     padding-bottom:1px;
     background-color:#B2DFDB;
+}
+#innOriginalNameLabel{
+ top:-0.6rem!important;   
 }
